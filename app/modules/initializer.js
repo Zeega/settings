@@ -24,8 +24,6 @@ function( app, MainLayout, Analytics) {
             $(".join-zeega").click(function(){ app.emit("to_signup"); });
             $(".create-a-zeega").click(function(){ app.emit("new_zeega"); });
 
-
-
             this.insertLayout();
         },
 
