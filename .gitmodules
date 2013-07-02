@@ -1,0 +1,3 @@
+[submodule "app/analytics"]
+	path = app/analytics
+	url = https://github.com/Zeega/Analytics-Wrapper.git

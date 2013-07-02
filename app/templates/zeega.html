@@ -1,0 +1,34 @@
+<% if( cover_image != "" ) { %>
+
+<article class="card" style="background-image: url(<%=cover_image %>);" >
+
+<% } else { %>
+
+<article class="card" >
+
+<% } %>
+  <div class="info-overlay">
+    <div class="left-column">
+      <a data-bypass="true" class="profile-link" href="<%=path %>profile/<%=user.id %>" >
+        <div class="profile-token" style="background-image: url(<%= user.thumbnail_url %>);"></div>
+       </a>
+    </div>
+    <div class="right-column">
+      <h1 class = "caption"><%= title %></h1>
+      
+      <div class="profile-name">
+        <a data-bypass="true" class="profile-link" href="<%=path %>profile/<%=user.id%>" >
+          <%=user.display_name%>
+        </a>
+      </div>
+    </div>
+  </div>
+  <a href="<%=path %><%=id %>" class="play" data-bypass="true"></a>
+</article>
+
+<% if ( editable ) { %>
+  <div class="edit-actions">
+    <a href="/editor/<%= id %>" class="edit-zeega btnz btnz-light" data-bypass="true" >edit</a>
+    <a href="#" class="delete-zeega btnz btnz-light">delete</a>
+  </div>
+<% } %>
