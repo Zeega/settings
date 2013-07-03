@@ -8,20 +8,20 @@ function( app ) {
 
     return Backbone.View.extend({
 
-        template: "sidebar",
-        className: "sidebar",
+        template: "settings",
+        className: "settings",
+        
         serialize: function() {
-            return  _.extend( app.metadata,
+            return  _.extend({},
+                app.metadata,
                 {
                     path: "http:" + app.metadata.hostname + app.metadata.directory
                 }
             );
         },
+
         events: {
-            "click .join-zeega": "onSignUp"
-        },
-        onSignUp: function(){
-            app.emit("to_signup", {source: "sidebarButton" });
+            // "click .join-zeega": "onSignUp"
         }
 
     });
