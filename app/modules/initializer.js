@@ -2,11 +2,12 @@ define([
     "app",
     // Modules
     "modules/layout-main",
+    "modules/user.model",
     "analytics/analytics",
     "backbone"
 ],
 
-function( app, MainLayout, Analytics) {
+function( app, MainLayout, User, Analytics) {
 
     return Backbone.Model.extend({
         
@@ -20,6 +21,7 @@ function( app, MainLayout, Analytics) {
                 path: app.metadata.path
             });
 
+            app.user = new User();
 
             $(".join-zeega").click(function(){ app.emit("to_signup"); });
             $(".create-a-zeega").click(function(){ app.emit("new_zeega"); });

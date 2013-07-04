@@ -11,7 +11,7 @@ function( app, Settings ) {
         template: "layout-main",
 
         beforeRender: function(){
-            this.insertView( ".ZEEGA-content-wrapper", new Settings() );
+            this.insertView( ".ZEEGA-content-wrapper", new Settings({ model: app.user }) );
         }
     });
 

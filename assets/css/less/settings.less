@@ -1,8 +1,8 @@
 .content-wrapper {
     background: rgba(255,255,255,0.5);
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
+    border: 2px solid #e3e7e8;
+    border-radius: 4px;
 
     .help-block {
         font-family: "helvetica", sans-serif;
@@ -17,6 +17,10 @@
         border-radius: 2px;
         font-size: 14px;
         height: 2em;
+
+        &.error {
+            border-color: red;
+        }
     }
 
     .half-width {
@@ -32,5 +36,14 @@
         font-size: 22px;
         height: auto;
         background-color: orangered;
+    }
+
+    .username-validation {
+        .valid {
+            color: limegreen;
+        }
+        .invalid {
+            color: red;
+        }
     }
 }
