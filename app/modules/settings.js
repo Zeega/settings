@@ -5,9 +5,7 @@ define([
 
 function( app ) {
 
-
     // TODO
-
     // validate email address
 
     return Backbone.View.extend({
@@ -36,9 +34,11 @@ function( app ) {
         },
 
         onUsernameKeydown: function( e ) {
-            var charCode = e.which;
+            var charCode = e.which,
+                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
+                isNumber = charCode >= 48 && charCode <= 57;
 
-            return !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122));
+            return isLetter || isNumber;
         },
 
         onUsernameFocus: function() {
@@ -50,7 +50,7 @@ function( app ) {
             this.isValidating = true;
 
             // broken in prod because of XDomain issues - 401
-            $.post("http://staging.zeega.com/api/users/validate",{ username: this.$("#username").val() }, function(data) {
+            $.post( app.meta.api + "users/validate",{ username: this.$("#username").val() }, function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
