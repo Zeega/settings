@@ -17054,7 +17054,7 @@ function( app ) {
             this.isValidating = true;
 
             // broken in prod because of XDomain issues - 401
-            $.post( app.meta.api + "users/validate",{ username: this.$("#username").val() }, function(data) {
+            $.post( app.metadata.api + "users/validate",{ username: this.$("#username").val() }, function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
