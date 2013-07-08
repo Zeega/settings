@@ -36,9 +36,9 @@ function( app ) {
         },
 
         onUsernameKeydown: function( e ) {
-            if ( e.which > 31 && ( e.which < 48 || e.which > 57 )) {
-                return false;
-            }
+            var charCode = e.which;
+
+            return !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122));
         },
 
         onUsernameFocus: function() {
