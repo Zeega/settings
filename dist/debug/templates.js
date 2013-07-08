@@ -39,7 +39,7 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( username )+
 '">\n            <span class="help-block">http://zeega.com/'+
 ( username )+
-' — Letters and numbers only</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
+' — Letters and numbers only * Must contain at least one letter!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
 '">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }

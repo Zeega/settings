@@ -425,7 +425,7 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( username )+
 '">\n            <span class="help-block">http://zeega.com/'+
 ( username )+
-' — Letters and numbers only</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
+' — Letters and numbers only * Must contain at least one letter!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
 '">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
@@ -17009,9 +17009,7 @@ define('modules/settings',[
 
 function( app ) {
 
-
     // TODO
-
     // validate email address
 
     return Backbone.View.extend({
@@ -17040,9 +17038,11 @@ function( app ) {
         },
 
         onUsernameKeydown: function( e ) {
-            var charCode = e.which;
+            var charCode = e.which,
+                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
+                isNumber = charCode >= 48 && charCode <= 57;
 
-            return !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122));
+            return isLetter || isNumber;
         },
 
         onUsernameFocus: function() {
@@ -17054,7 +17054,7 @@ function( app ) {
             this.isValidating = true;
 
             // broken in prod because of XDomain issues - 401
-            $.post("http://staging.zeega.com/api/users/validate",{ username: this.$("#username").val() }, function(data) {
+            $.post( app.meta.api + "users/validate",{ username: this.$("#username").val() }, function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
