@@ -73,12 +73,10 @@ function( app ) {
         },
 
         settingsSubmit: function() {
-            console.log("password", this.$("#password").val());
             if ( this.isValidating ) {
                 this.model.once("validated", this.settingsSubmit, this);
             } else if ( this.valid ) {
-                console.log('submit');
-                this.model.set({
+                this.model.save({
                     display_name: this.$("#display-name").val(),
                     username: this.$("#username").val(),
                     email: this.$("#email").val(),

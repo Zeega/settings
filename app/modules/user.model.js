@@ -23,6 +23,10 @@ function( app ) {
             email: "tester@test.com"
         },
 
+        url: function() {
+            return app.metadata.api + "users/" + this.id;
+        },
+
         initialize: function() {
             this.set( $.parseJSON( profileData ));
         }
