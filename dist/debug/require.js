@@ -17072,11 +17072,12 @@ function( app ) {
             }.bind(this))
             .always(function() {
                 this.isValidating = false;
-            });
+            }.bind(this));
             
         },
 
         settingsSubmit: function() {
+
             if ( this.isValidating ) {
                 this.model.once("validated", this.settingsSubmit, this);
             } else if ( this.valid ) {
