@@ -427,7 +427,7 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( username )+
 '</span> — Letters and numbers only!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
-'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-red settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
+'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
 return __p;
 };
@@ -17035,7 +17035,15 @@ function( app ) {
             "focus #username": "onUsernameFocus",
             "blur #username": "validateUsername",
             "keydown #username": "onUsernameKeydown",
-            "paste #username": "onPaste"
+            "paste #username": "onPaste",
+            "keydown input": "onAnyInput"
+        },
+
+        onAnyInput: function() {
+            $(".settings-submit")
+                .text("Save Updates")
+                .addClass("btnz-red")
+                .removeClass("btnz-disabled btnz-success btnz-flat");
         },
 
         onPaste: function() {
@@ -17110,7 +17118,10 @@ function( app ) {
                 email: this.$("#email").val(),
                 password: this.$("#password").val()
             });
-            $(".settings-submit").addClass("btnz-red").removeClass("btnz-disabled");
+            $(".settings-submit")
+                .text("Updates Saved!")
+                .addClass("btnz-success btnz-flat")
+                .removeClass("btnz-disabled");
         }
 
     });

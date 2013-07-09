@@ -31,7 +31,15 @@ function( app ) {
             "focus #username": "onUsernameFocus",
             "blur #username": "validateUsername",
             "keydown #username": "onUsernameKeydown",
-            "paste #username": "onPaste"
+            "paste #username": "onPaste",
+            "keydown input": "onAnyInput"
+        },
+
+        onAnyInput: function() {
+            $(".settings-submit")
+                .text("Save Updates")
+                .addClass("btnz-red")
+                .removeClass("btnz-disabled btnz-success btnz-flat");
         },
 
         onPaste: function() {
@@ -106,7 +114,10 @@ function( app ) {
                 email: this.$("#email").val(),
                 password: this.$("#password").val()
             });
-            $(".settings-submit").addClass("btnz-red").removeClass("btnz-disabled");
+            $(".settings-submit")
+                .text("Updates Saved!")
+                .addClass("btnz-success btnz-flat")
+                .removeClass("btnz-disabled");
         }
 
     });

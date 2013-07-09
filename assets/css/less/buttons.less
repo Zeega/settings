@@ -33,15 +33,12 @@
         }
     }
 
-    &.btnz-disabled {
-        background-color: #ccc;
-    }
-
     &.btnz-red {
         background-color: orangered;
     }
 
-    &.btnz-green {
+    &.btnz-green,
+    &.btnz-success {
         background-color: limegreen;
         color: #white;
     }
@@ -56,7 +53,6 @@
     }
 
     &.bold-btnz{
-
         position: fixed;
         z-index:2;
         margin: 10px 25px 0 0;
@@ -71,5 +67,14 @@
         &.create-a-zeega {
             width: 154px;
         }
+    }
+
+    &.btnz-disabled {
+        background-color: #ccc;
+        box-shadow: none;
+    }
+
+    &.btnz-flat {
+        box-shadow: none;
     }
 }

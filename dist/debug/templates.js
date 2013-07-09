@@ -41,7 +41,7 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( username )+
 '</span> — Letters and numbers only!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
-'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-red settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
+'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
 return __p;
 };
