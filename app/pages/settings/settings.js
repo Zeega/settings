@@ -10,7 +10,7 @@ function( app ) {
 
     return Backbone.View.extend({
 
-        template: "settings",
+        template: "pages/settings/settings",
         className: "settings",
         valid: true,
         isValidating: false,

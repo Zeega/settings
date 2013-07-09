@@ -33,7 +33,7 @@ define([
         // Allow LayoutManager to augment Backbone.View.prototype.
         manage: true,
 
-        prefix: "app/templates/",
+        prefix: "app/",
 
         fetch: function(path) {
             // Concatenate the file extension.
@@ -63,18 +63,7 @@ define([
             return _.extend({ Views: {} }, additionalProps);
         },
 
-        $: jQuery,
-
-        // Helper for using layouts.
-        useLayout: function(options) {
-            // Create a new Layout with options.
-            var layout = new Backbone.Layout(_.extend({
-                el: "body"
-            }, options));
-
-            // Cache the refererence.
-            return this.layout = layout;
-        }
+        $: jQuery
     }, Backbone.Events);
 
 });
