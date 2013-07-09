@@ -1531,7 +1531,7 @@ a.tag-link:hover {
 .content-wrapper .username-validation .invalid {
   color: red;
 }
-.social-registration input {
+.page-social input {
   background: #eee;
   width: calc(100% - 20px);
   box-shadow: none;
@@ -1539,21 +1539,21 @@ a.tag-link:hover {
   font-size: 14px;
   height: 2em;
 }
-.social-registration input.error {
+.page-social input.error {
   border-color: red;
 }
-.social-registration .username-validation .valid {
+.page-social .username-validation .valid {
   color: limegreen;
 }
-.social-registration .username-validation .invalid {
+.page-social .username-validation .invalid {
   color: red;
 }
-.social-registration .help-block {
+.page-social .help-block {
   font-family: "helvetica", sans-serif;
   font-size: 12px;
   color: #999999;
 }
-.social-registration .submit {
+.page-social .submit {
   border: 0;
   display: block;
   width: 100%;
@@ -1562,5 +1562,5 @@ a.tag-link:hover {
   height: 55px;
   font-family: "futura", sans-serif;
   font-size: 18px;
-  margin-top: 10px;
+  margin-top: 20px;
 }

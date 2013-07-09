@@ -33,6 +33,7 @@ function(app, Initializer) {
         },
 
         init: _.once(function() {
+            $("body").addClass("page-" + app.page )
             new Initializer();
         })
 
