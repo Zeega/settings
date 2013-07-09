@@ -37,11 +37,11 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( display_name )+
 '">\n            <span class="help-block">The name that will appear next to your Zeegas.</span>\n\n            <label>Username <span class="username-validation"></span></label>\n            <input id="username" type="text" placeholder="Username" value="'+
 ( username )+
-'">\n            <span class="help-block">http://zeega.com/@'+
+'">\n            <span class="help-block">http://zeega.com/@<span class="username-preview">'+
 ( username )+
-' — Letters and numbers only!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
+'</span> — Letters and numbers only!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
-'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
+'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-red settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
 return __p;
 };

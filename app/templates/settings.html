@@ -10,7 +10,7 @@
 
             <label>Username <span class="username-validation"></span></label>
             <input id="username" type="text" placeholder="Username" value="<%= username %>">
-            <span class="help-block">http://zeega.com/@<%= username %> — Letters and numbers only!</span>
+            <span class="help-block">http://zeega.com/@<span class="username-preview"><%= username %></span> — Letters and numbers only!</span>
 
             <div class="half-width">
                 <label>Email Address</label>
@@ -22,7 +22,7 @@
                 <input id="password" type="password" placeholder="Password" >
             </div>
             
-            <a href="#" class="btnz settings-submit">Save Updates</a>
+            <a href="#" class="btnz btnz-red settings-submit">Save Updates</a>
         
         </fieldset>
     </form>

@@ -423,11 +423,11 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( display_name )+
 '">\n            <span class="help-block">The name that will appear next to your Zeegas.</span>\n\n            <label>Username <span class="username-validation"></span></label>\n            <input id="username" type="text" placeholder="Username" value="'+
 ( username )+
-'">\n            <span class="help-block">http://zeega.com/@'+
+'">\n            <span class="help-block">http://zeega.com/@<span class="username-preview">'+
 ( username )+
-' — Letters and numbers only!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
+'</span> — Letters and numbers only!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
-'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
+'">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-red settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
 return __p;
 };
@@ -17034,20 +17034,34 @@ function( app ) {
             "click .settings-submit": "settingsSubmit",
             "focus #username": "onUsernameFocus",
             "blur #username": "validateUsername",
-            "keydown #username": "onUsernameKeydown"
+            "keydown #username": "onUsernameKeydown",
+            "paste #username": "onPaste"
+        },
+
+        onPaste: function() {
+            _.delay(function() {
+                var pastedContent = $("#username").val(),
+                    cleansedContent = pastedContent.replace(/[^a-z0-9]/gi,"");
+
+                $("#username").val( cleansedContent );
+            }, 250 );
         },
 
         onUsernameKeydown: function( e ) {
             var charCode = e.which,
                 isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57;
+                isNumber = charCode >= 48 && charCode <= 57,
+                isOkay = isLetter || isNumber;
 
-            return isLetter || isNumber;
+            if ( isOkay ) {
+                $(".username-preview").text( $("#username").val());
+            }
+
+            return isOkay;
         },
 
         onUsernameFocus: function() {
             this.valid = false;
-            console.log("username focus", this.valid);
         },
 
         validateUsername: function() {
@@ -17057,6 +17071,7 @@ function( app ) {
             $.post( app.metadata.api + "users/validate",{ username: this.$("#username").val() }, function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
+                    this.model.trigger("validated");
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
                     $("#username").removeClass("error");
                 } else {
@@ -17078,16 +17093,22 @@ function( app ) {
 
         settingsSubmit: function() {
 
+            $(".settings-submit").removeClass("btnz-red").addClass("btnz-disabled");
             if ( this.isValidating ) {
-                this.model.once("validated", this.settingsSubmit, this);
+                this.model.once("validated", this.saveUserModel, this);
             } else if ( this.valid ) {
-                this.model.save({
-                    display_name: this.$("#display-name").val(),
-                    username: this.$("#username").val(),
-                    email: this.$("#email").val(),
-                    password: this.$("#password").val()
-                });
+               this.saveUserModel();
             }
+        },
+
+        saveUserModel: function() {
+            this.model.save({
+                display_name: this.$("#display-name").val(),
+                username: this.$("#username").val(),
+                email: this.$("#email").val(),
+                password: this.$("#password").val()
+            });
+            $(".settings-submit").addClass("btnz-red").removeClass("btnz-disabled");
         }
 
     });

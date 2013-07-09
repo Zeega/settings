@@ -30,20 +30,34 @@ function( app ) {
             "click .settings-submit": "settingsSubmit",
             "focus #username": "onUsernameFocus",
             "blur #username": "validateUsername",
-            "keydown #username": "onUsernameKeydown"
+            "keydown #username": "onUsernameKeydown",
+            "paste #username": "onPaste"
+        },
+
+        onPaste: function() {
+            _.delay(function() {
+                var pastedContent = $("#username").val(),
+                    cleansedContent = pastedContent.replace(/[^a-z0-9]/gi,"");
+
+                $("#username").val( cleansedContent );
+            }, 250 );
         },
 
         onUsernameKeydown: function( e ) {
             var charCode = e.which,
                 isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57;
+                isNumber = charCode >= 48 && charCode <= 57,
+                isOkay = isLetter || isNumber;
 
-            return isLetter || isNumber;
+            if ( isOkay ) {
+                $(".username-preview").text( $("#username").val());
+            }
+
+            return isOkay;
         },
 
         onUsernameFocus: function() {
             this.valid = false;
-            console.log("username focus", this.valid);
         },
 
         validateUsername: function() {
@@ -53,6 +67,7 @@ function( app ) {
             $.post( app.metadata.api + "users/validate",{ username: this.$("#username").val() }, function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
+                    this.model.trigger("validated");
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
                     $("#username").removeClass("error");
                 } else {
@@ -74,16 +89,22 @@ function( app ) {
 
         settingsSubmit: function() {
 
+            $(".settings-submit").removeClass("btnz-red").addClass("btnz-disabled");
             if ( this.isValidating ) {
-                this.model.once("validated", this.settingsSubmit, this);
+                this.model.once("validated", this.saveUserModel, this);
             } else if ( this.valid ) {
-                this.model.save({
-                    display_name: this.$("#display-name").val(),
-                    username: this.$("#username").val(),
-                    email: this.$("#email").val(),
-                    password: this.$("#password").val()
-                });
+               this.saveUserModel();
             }
+        },
+
+        saveUserModel: function() {
+            this.model.save({
+                display_name: this.$("#display-name").val(),
+                username: this.$("#username").val(),
+                email: this.$("#email").val(),
+                password: this.$("#password").val()
+            });
+            $(".settings-submit").addClass("btnz-red").removeClass("btnz-disabled");
         }
 
     });

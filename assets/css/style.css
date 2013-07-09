@@ -1393,6 +1393,12 @@ header.ZEEGA-HEAD .head-nav.nav-right li {
 .btnz.btnz-light:hover {
   background-color: rgba(255, 255, 255, 0.95);
 }
+.btnz.btnz-disabled {
+  background-color: #ccc;
+}
+.btnz.btnz-red {
+  background-color: orangered;
+}
 .btnz.btnz-green {
   background-color: limegreen;
   color: #white;
@@ -1805,7 +1811,6 @@ article .play:hover {
   margin-top: 20px;
   font-size: 22px;
   height: auto;
-  background-color: orangered;
 }
 .content-wrapper .username-validation .valid {
   color: limegreen;
