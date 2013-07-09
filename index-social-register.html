@@ -1,75 +1,39 @@
-
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" style="height:100%" lang="en-US">
     <head>
         
+        <!--
+        <link rel="icon" type="image/png" href="/jmongo/web/images/zeega.ico">
+        -->
+        <title>Zeega</title>
 
-<link rel="icon" type="image/png" href="/jmongo/web/images/zeega.ico">
-<title>Zeega</title>
+        <meta name="description" content="Zeega is a new form of interactive media, enabling anyone to express themselves by easily combining media from the cloud. Make the web you want.">
+        <meta name="keywords" content="zeega, interactive, gif, audio">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<meta name="description" content="Zeega is a new form of interactive media, enabling anyone to express themselves by easily combining media from the cloud. Make the web you want.">
-<meta name="keywords" content="zeega, interactive, gif, audio">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-
-<!-- FB -->
-<meta property="og:site_name" content="Zeega"/>
-<meta property="og:title" content="Zeega"/>
-<meta property="og:description" content="Zeega is a new form of interactive media, enabling anyone to express themselves by easily combining media from the cloud. Make the web you want."/>
-<meta property="og:type" content="website"/>
-<meta property="og:url" content="http://dev.zeega.com/"/>
-<meta property="og:image" content="http://dev.zeega.com/images/zeega_fb.png"/>
-<!-- END FB --> 
-
-
-<!-- Twitter -->
-
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@zeega">
-<meta name="twitter:title" content="Zeega">
-<meta name="twitter:description" content="Zeegas are a new format of interactive media, enabling anyone to easily combine animated GIFs, audio, images, text and video from across the web. Make the web you want.">
-<meta name="twitter:creator" content="">
-<meta name="twitter:image:src" content="http://dev.zeega.com/images/zeega_twitter.png">
-<meta name="twitter:domain" content="zeega.com">
-
-<!-- End Twitter -->         
-                
+        <meta name="zeega" content="zeega-home"
+            data-directory="jmongo/web/"
+            data-hostname="//dev.zeega.com/"
+            data-api= "http://dev.zeega.com/jmongo/web/api/"
+            data-root= ""
+            data-tags="homepage"
+            data-user-id="-1"
+            data-profile-id="51afee2c8d34d4d711000e93"
+            data-media-server= "http://dev.zeega.com/kinok/"
+            data-path="/"
+            data-page="social-settings"
+        />
+            
+        <title>Zeega</title>
         
+        <link rel="shortcut icon" type="image/x-icon" href="http://zeega.org/images/zeega.ico"> 
+        <link rel="stylesheet" href="assets/css/style.css">
 
-
-        <script>
-            if (!window.console) console = {log: function() {}}; 
-            sessionStorage.setItem('directory', 'jmongo/web/');
-            sessionStorage.setItem('hostname','//dev.zeega.com/');
-            sessionStorage.setItem('userid','51afee498d34d4d711002a33');
-        </script>
-        
-            <title>Zeega</title>
-    <link rel="shortcut icon" type="image/x-icon" href="http://zeega.org/images/zeega.ico"> 
+    </head>
     
-    <style type="text/css">
-        html { 
-            background: url(/jmongo/web/images/graphpaper.png);
-        }
-    </style>
-    
-
-    <!-- Less - LOAD variables.less FIRST and then other stuff and then style.less at the end -->
-    <link rel="stylesheet/less" type="text/css" href="/jmongo/web/css/less/community/bootstrap.less">
-    <script type="text/javascript" src="/jmongo/web/js//lib/less-1.3.0.min.js"></script>
-    <script> /* Provisory for dev environment: */ localStorage.clear(); </script>
-    <link href='https://fonts.googleapis.com/css?family=Podkova:400,700' rel='stylesheet' type='text/css'> <!-- Including Google's Font -->
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
-    <!-- BEGIN Partial view with Facebook login code -->
-
-
-<!-- END Partial view with Facebook login code -->    </head>
-    
-    <body> 
+    <body class="social-registration"> 
 
         <header class="ZEEGA-HEAD">
-            <!-- logged in nav -->
             <ul class="head-nav nav-left">
                 <li class="tab">
                     <a href="http://www.zeega.com" class="ZEEGA-tab">
@@ -94,17 +58,14 @@
                     <a class="btnz create-a-zeega" href="http://www.zeega.com/project/new" > Create A New Zeega</a>
                 </li>
             </ul>
-            
-            <!--end logged in nav -->
-            <!-- logged out nav -->
-            <!-- <a class="btnz login" href="http://dev.zeega.com/jmongo/web/login">Login</a> -->
-            <!-- end logged out nav -->
         </header>
 
 
-        <div id="wrapper">
+        <div class="wrapper">
             
-            <div id="editor" class='clearfix'>
+            <h1>Settings</h1>
+
+            <div class="inner-wrapper">
                 <form action="/jmongo/web/api/users/51afee498d34d4d711002a33" method="put" >
                     <div id="form">
                         <div>
@@ -112,17 +73,20 @@
                             <input type="text" id="form_email" name="form[email]" required="required" value="joseph@zeega.com" />
                         </div>
                         <div>
-                            <label for="form_username" class="required">Username</label>
-                            <input type="text" id="form_username" name="form[username]" required="required" value="joseph@zeega.com" />
+                            <label for="form_username" class="required">Username <span class="username-validation"></span></label>
+                            <input type="text" id="form_username" name="form[username]" required="required" value="jbergen" />
+                            <span class="help-block">http://zeega.com/@<span class="username-preview">jbergen</span> — Letters and numbers only!</span>
                         </div>
                             <input type="hidden" id="form__token" name="form[_token]" value="39424a6b2a63c6b016c2dfb09c1c105f1a3659ed" />
                         </div>
-                    <input type="submit" />
+                    <input type="submit" class="submit" />
                 </form>
-            </div> <!-- #editor --> 
+            </div> <!-- inner-wrapper --> 
 
 
-        </div> <!-- #wrapper -->
+        </div> <!-- wrapper -->
         
     </body>
+
+    <script data-main="/app/config" src="/vendor/js/libs/require.js"></script>
 </html>

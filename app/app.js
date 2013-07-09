@@ -14,25 +14,15 @@ define([
             // other things can be done here as well
             this.trigger( event, args );
         }
-
     };
 
     // Localize or create a new JavaScript Template object.
     var JST = window.JST = window.JST || {};
 
-
-    // Curry the |set| method with a { silent: true } version
-    // to avoid repetitious boilerplate code throughout project
-    Backbone.Model.prototype.put = function() {
-        var args = [].slice.call( arguments ).concat([ { silent: true } ]);
-        return this.set.apply( this, args );
-    };
-        
     // Configure LayoutManager with Backbone Boilerplate defaults.
     Backbone.LayoutManager.configure({
         // Allow LayoutManager to augment Backbone.View.prototype.
         manage: true,
-
         prefix: "app/",
 
         fetch: function(path) {
@@ -56,13 +46,7 @@ define([
 
     // Mix Backbone.Events, modules, and layout management into the app object.
     return _.extend(app, {
-
         Backbone: Backbone,
-        // Create a custom object with a nested Views object.
-        module: function(additionalProps) {
-            return _.extend({ Views: {} }, additionalProps);
-        },
-
         $: jQuery
     }, Backbone.Events);
 

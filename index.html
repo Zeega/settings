@@ -30,10 +30,9 @@
 
     </head>
     
-    <body> 
+    <body class="social-registration"> 
 
         <header class="ZEEGA-HEAD">
-            <!-- logged in nav -->
             <ul class="head-nav nav-left">
                 <li class="tab">
                     <a href="http://www.zeega.com" class="ZEEGA-tab">
@@ -58,17 +57,14 @@
                     <a class="btnz create-a-zeega" href="http://www.zeega.com/project/new" > Create A New Zeega</a>
                 </li>
             </ul>
-            
-            <!--end logged in nav -->
-            <!-- logged out nav -->
-            <!-- <a class="btnz login" href="http://dev.zeega.com/jmongo/web/login">Login</a> -->
-            <!-- end logged out nav -->
         </header>
 
 
-        <div id="wrapper">
+        <div class="wrapper">
             
-            <div id="editor" class='clearfix'>
+            <h1>Settings</h1>
+
+            <div class="inner-wrapper">
                 <form action="/jmongo/web/api/users/51afee498d34d4d711002a33" method="put" >
                     <div id="form">
                         <div>
@@ -76,17 +72,18 @@
                             <input type="text" id="form_email" name="form[email]" required="required" value="joseph@zeega.com" />
                         </div>
                         <div>
-                            <label for="form_username" class="required">Username</label>
-                            <input type="text" id="form_username" name="form[username]" required="required" value="joseph@zeega.com" />
+                            <label for="form_username" class="required">Username <span class="username-validation"></span></label>
+                            <input type="text" id="form_username" name="form[username]" required="required" value="jbergen" />
+                            <span class="help-block">http://zeega.com/@<span class="username-preview">jbergen</span> — Letters and numbers only!</span>
                         </div>
                             <input type="hidden" id="form__token" name="form[_token]" value="39424a6b2a63c6b016c2dfb09c1c105f1a3659ed" />
                         </div>
-                    <input type="submit" />
+                    <input type="submit" class="submit" />
                 </form>
-            </div> <!-- #editor --> 
+            </div> <!-- inner-wrapper --> 
 
 
-        </div> <!-- #wrapper -->
+        </div> <!-- wrapper -->
         
     </body>
 

@@ -21,10 +21,10 @@ function( app, MainLayout, User, Analytics) {
                 path: app.metadata.path
             });
 
-            app.user = new User();
+            if ( window.profileData ) app.user = new User();
 
-            $(".join-zeega").click(function(){ app.emit("to_signup"); });
-            $(".create-a-zeega").click(function(){ app.emit("new_zeega"); });
+            $(".join-zeega").click(function() { app.emit("to_signup"); });
+            $(".create-a-zeega").click(function() { app.emit("new_zeega"); });
 
             this.insertLayout();
         },

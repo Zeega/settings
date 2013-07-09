@@ -28,7 +28,7 @@ function( app ) {
         },
 
         initialize: function() {
-            this.set( $.parseJSON( profileData ));
+            if ( window.profileData ) this.set( $.parseJSON( profileData ));
         }
 
     });

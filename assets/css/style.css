@@ -1466,10 +1466,18 @@ body {
   height: 100%;
   max-height: 100%;
 }
+.wrapper,
 .ZEEGA-content-wrapper {
   width: 550px;
   padding-top: 50px;
   margin: 0 auto 0 auto;
+}
+.inner-wrapper {
+  padding-top: 50px;
+  background: white;
+  border: 3px solid #e3e7e8;
+  padding: 20px;
+  border-radius: 3px;
 }
 a {
   text-decoration: none;
@@ -1484,7 +1492,7 @@ a.tag-link:hover {
   background-color: orangered;
 }
 .content-wrapper {
-  background: rgba(255, 255, 255, 0.5);
+  background: white;
   padding: 20px;
   border: 2px solid #e3e7e8;
   border-radius: 4px;
@@ -1496,7 +1504,7 @@ a.tag-link:hover {
 }
 .content-wrapper input {
   background: #eee;
-  width: calc(100% - 20px);
+  width: calc(100% - 16px);
   box-shadow: none;
   border-radius: 2px;
   font-size: 14px;
@@ -1522,4 +1530,37 @@ a.tag-link:hover {
 }
 .content-wrapper .username-validation .invalid {
   color: red;
+}
+.social-registration input {
+  background: #eee;
+  width: calc(100% - 20px);
+  box-shadow: none;
+  border-radius: 2px;
+  font-size: 14px;
+  height: 2em;
+}
+.social-registration input.error {
+  border-color: red;
+}
+.social-registration .username-validation .valid {
+  color: limegreen;
+}
+.social-registration .username-validation .invalid {
+  color: red;
+}
+.social-registration .help-block {
+  font-family: "helvetica", sans-serif;
+  font-size: 12px;
+  color: #999999;
+}
+.social-registration .submit {
+  border: 0;
+  display: block;
+  width: 100%;
+  background: limegreen;
+  color: white;
+  height: 55px;
+  font-family: "futura", sans-serif;
+  font-size: 18px;
+  margin-top: 10px;
 }

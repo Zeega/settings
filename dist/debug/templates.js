@@ -1,27 +1,5 @@
 this["JST"] = this["JST"] || {};
 
-this["JST"]["app/templates/footer.html"] = function(obj){
-var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};
-with(obj||{}){
-__p+='\n    <span class="tags">\n        <h1>Explore more Zeegas...  <br>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/bestof" >#bestof</a>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/stories" >#stories</a>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/funny" >#funny</a>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/music" >#music</a>\n        </h1>\n    </span>\n    ';
- if (userId == -1 ){ 
-;__p+='\n        <span >\n            <h1>\n                <a class="btnz join-zeega" href="'+
-(path )+
-'register" >Join Zeega</a>\n            </h1>\n        </span>   \n    ';
- } 
-;__p+='';
-}
-return __p;
-};
-
 this["JST"]["app/templates/layout-main.html"] = function(obj){
 var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};
 with(obj||{}){
@@ -30,7 +8,7 @@ __p+='<div class="ZEEGA-content-wrapper"></div>';
 return __p;
 };
 
-this["JST"]["app/templates/settings.html"] = function(obj){
+this["JST"]["app/pages/settings/settings.html"] = function(obj){
 var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};
 with(obj||{}){
 __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        <fieldset>\n            <label>Display Name</label>\n            <input id="display-name" type="text" placeholder="Display Name" value="'+

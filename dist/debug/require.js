@@ -386,28 +386,6 @@ var requirejs, require, define;
 
 this["JST"] = this["JST"] || {};
 
-this["JST"]["app/templates/footer.html"] = function(obj){
-var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};
-with(obj||{}){
-__p+='\n    <span class="tags">\n        <h1>Explore more Zeegas...  <br>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/bestof" >#bestof</a>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/stories" >#stories</a>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/funny" >#funny</a>\n            <a class="tag-link" data-bypass="true" href="'+
-(path )+
-'tag/music" >#music</a>\n        </h1>\n    </span>\n    ';
- if (userId == -1 ){ 
-;__p+='\n        <span >\n            <h1>\n                <a class="btnz join-zeega" href="'+
-(path )+
-'register" >Join Zeega</a>\n            </h1>\n        </span>   \n    ';
- } 
-;__p+='';
-}
-return __p;
-};
-
 this["JST"]["app/templates/layout-main.html"] = function(obj){
 var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};
 with(obj||{}){
@@ -416,7 +394,7 @@ __p+='<div class="ZEEGA-content-wrapper"></div>';
 return __p;
 };
 
-this["JST"]["app/templates/settings.html"] = function(obj){
+this["JST"]["app/pages/settings/settings.html"] = function(obj){
 var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};
 with(obj||{}){
 __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        <fieldset>\n            <label>Display Name</label>\n            <input id="display-name" type="text" placeholder="Display Name" value="'+
@@ -16937,26 +16915,16 @@ define('app',[
             // other things can be done here as well
             this.trigger( event, args );
         }
-
     };
 
     // Localize or create a new JavaScript Template object.
     var JST = window.JST = window.JST || {};
 
-
-    // Curry the |set| method with a { silent: true } version
-    // to avoid repetitious boilerplate code throughout project
-    Backbone.Model.prototype.put = function() {
-        var args = [].slice.call( arguments ).concat([ { silent: true } ]);
-        return this.set.apply( this, args );
-    };
-        
     // Configure LayoutManager with Backbone Boilerplate defaults.
     Backbone.LayoutManager.configure({
         // Allow LayoutManager to augment Backbone.View.prototype.
         manage: true,
-
-        prefix: "app/templates/",
+        prefix: "app/",
 
         fetch: function(path) {
             // Concatenate the file extension.
@@ -16979,30 +16947,13 @@ define('app',[
 
     // Mix Backbone.Events, modules, and layout management into the app object.
     return _.extend(app, {
-
         Backbone: Backbone,
-        // Create a custom object with a nested Views object.
-        module: function(additionalProps) {
-            return _.extend({ Views: {} }, additionalProps);
-        },
-
-        $: jQuery,
-
-        // Helper for using layouts.
-        useLayout: function(options) {
-            // Create a new Layout with options.
-            var layout = new Backbone.Layout(_.extend({
-                el: "body"
-            }, options));
-
-            // Cache the refererence.
-            return this.layout = layout;
-        }
+        $: jQuery
     }, Backbone.Events);
 
 });
 
-define('modules/settings',[
+define('pages/settings/settings',[
     "app",
     "backbone"
 ],
@@ -17014,7 +16965,7 @@ function( app ) {
 
     return Backbone.View.extend({
 
-        template: "settings",
+        template: "pages/settings/settings",
         className: "settings",
         valid: true,
         isValidating: false,
@@ -17126,25 +17077,6 @@ function( app ) {
 
 });
 
- define('modules/layout-main',[
-    "app",
-    "modules/settings",
-    "backbone"
-],
-
-function( app, Settings ) {
-
-    return Backbone.Layout.extend({
-        el: "#main",
-        template: "layout-main",
-
-        beforeRender: function(){
-            this.insertView( ".ZEEGA-content-wrapper", new Settings({ model: app.user }) );
-        }
-    });
-
-});
-
 define('modules/user.model',[
     "app",
     "backbone"
@@ -17175,9 +17107,152 @@ function( app ) {
         },
 
         initialize: function() {
-            this.set( $.parseJSON( profileData ));
+            if ( window.profileData ) this.set( $.parseJSON( profileData ));
         }
 
+    });
+
+});
+
+define('pages/social-registration/social',[
+    "app",
+    "modules/user.model",
+    "backbone"
+],
+
+function( app, User ) {
+
+    // TODO
+    // validate email address
+
+    return Backbone.View.extend({
+
+        el: $(".social-registration .wrapper"),
+
+        valid: true,
+        isValidating: false,
+        
+        initialize: function() {
+            this.model = new User();
+        },
+
+        events: {
+            "click .submit": "settingsSubmit",
+            "blur #form_username": "validateUsername",
+            "keydown #form_username": "onUsernameKeydown",
+            "paste #form_username": "onPaste",
+            "keydown input": "onAnyInput"
+        },
+
+        onAnyInput: function() {
+            $(".submit")
+                .text("Save Updates")
+                .addClass("btnz-red")
+                .removeClass("btnz-disabled btnz-success btnz-flat");
+        },
+
+        onPaste: function() {
+            $(".username-validation").empty();
+            _.delay(function() {
+                var pastedContent = $("#form_username").val(),
+                    cleansedContent = pastedContent.replace(/[^a-z0-9]/gi,"");
+
+                $("#form_username").val( cleansedContent );
+            }, 250 );
+        },
+
+        onUsernameKeydown: function( e ) {
+            var charCode = e.which,
+                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
+                isNumber = charCode >= 48 && charCode <= 57,
+                isOkay = isLetter || isNumber;
+
+            this.valid = false;
+            $(".username-validation").empty();
+            
+            if ( isOkay ) {
+                $(".username-preview").text( $("#form_username").val());
+            }
+
+            return isOkay;
+        },
+
+        validateUsername: function() {
+            this.isValidating = true;
+
+            // broken in prod because of XDomain issues - 401
+            $.post( app.metadata.api + "users/validate",{ username: this.$("#form_username").val() }, function(data) {
+                this.valid = data.valid;
+                if ( data.valid ) {
+                    this.model.trigger("validated");
+                    this.$(".username-validation").html("— <span class='valid'>ok!</span>");
+                    $("#form_username").removeClass("error");
+                } else {
+                    this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
+                    $("#form_username").addClass("error");
+                }
+            }.bind(this))
+            .fail(function( e ) {
+                console.log("validation fail. Details:", e);
+                this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
+                $("#form_username").addClass("error");
+                // this.valid = true; // rm this. invalid. for testing
+            }.bind(this))
+            .always(function() {
+                this.isValidating = false;
+            }.bind(this));
+            
+        },
+
+        settingsSubmit: function() {
+
+            $(".submit").removeClass("btnz-red").addClass("btnz-disabled");
+            if ( this.isValidating ) {
+                this.model.once("validated", this.saveUserModel, this);
+            } else if ( this.valid ) {
+               this.saveUserModel();
+            }
+        },
+
+        saveUserModel: function() {
+            this.model.save({
+                display_name: this.$("#display-name").val(),
+                username: this.$("#form_username").val(),
+                email: this.$("#email").val(),
+                password: this.$("#password").val()
+            });
+            $(".submit")
+                .text("Updates Saved!")
+                .addClass("btnz-success btnz-flat")
+                .removeClass("btnz-disabled");
+        }
+
+    });
+
+
+});
+
+ define('modules/layout-main',[
+    "app",
+    "pages/settings/settings",
+    "pages/social-registration/social",
+    "backbone"
+],
+
+function( app, Settings, Social ) {
+
+    return Backbone.Layout.extend({
+        el: "#main",
+        template: "templates/layout-main",
+
+        beforeRender: function(){
+
+            if ( app.page == "settings") {
+                this.insertView( ".ZEEGA-content-wrapper", new Settings({ model: app.user }) );
+            } else if ( app.page == "social") {
+                new Social();
+            }
+        }
     });
 
 });
@@ -17353,10 +17428,10 @@ function( app, MainLayout, User, Analytics) {
                 path: app.metadata.path
             });
 
-            app.user = new User();
+            if ( window.profileData ) app.user = new User();
 
-            $(".join-zeega").click(function(){ app.emit("to_signup"); });
-            $(".create-a-zeega").click(function(){ app.emit("new_zeega"); });
+            $(".join-zeega").click(function() { app.emit("to_signup"); });
+            $(".create-a-zeega").click(function() { app.emit("new_zeega"); });
 
             this.insertLayout();
         },
@@ -17382,21 +17457,33 @@ function(app, Initializer) {
 
     // Defining the application router, you can attach sub routers here.
     var Router = Backbone.Router.extend({
+
         routes: {
-            "": "index"
+            "": "index",
+            "settings": "settings",
+            "social": "social"
         },
 
         index: function() {
-            initialize();
-        }
+            app.page = "settings";
+            this.init();
+        },
+
+        settings: function() {
+            app.page = "settings";
+            this.init();
+        },
+
+        social: function() {
+            app.page = "social";
+            this.init();
+        },
+
+        init: _.once(function() {
+            new Initializer();
+        })
 
     });
-
-    /* create init fxn that can only run once per load */
-    var init = function() {
-        new Initializer();
-    };
-    var initialize = _.once( init );
 
     return Router;
 
