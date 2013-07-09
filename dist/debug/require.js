@@ -17032,7 +17032,6 @@ function( app ) {
 
         events: {
             "click .settings-submit": "settingsSubmit",
-            "focus #username": "onUsernameFocus",
             "blur #username": "validateUsername",
             "keydown #username": "onUsernameKeydown",
             "paste #username": "onPaste",
@@ -17062,16 +17061,14 @@ function( app ) {
                 isNumber = charCode >= 48 && charCode <= 57,
                 isOkay = isLetter || isNumber;
 
+            this.valid = false;
             $(".username-validation").empty();
+            
             if ( isOkay ) {
                 $(".username-preview").text( $("#username").val());
             }
 
             return isOkay;
-        },
-
-        onUsernameFocus: function() {
-            this.valid = false;
         },
 
         validateUsername: function() {
