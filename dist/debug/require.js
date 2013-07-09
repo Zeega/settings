@@ -17039,6 +17039,7 @@ function( app ) {
         },
 
         onPaste: function() {
+            $(".username-validation").empty();
             _.delay(function() {
                 var pastedContent = $("#username").val(),
                     cleansedContent = pastedContent.replace(/[^a-z0-9]/gi,"");
@@ -17053,6 +17054,7 @@ function( app ) {
                 isNumber = charCode >= 48 && charCode <= 57,
                 isOkay = isLetter || isNumber;
 
+            $(".username-validation").empty();
             if ( isOkay ) {
                 $(".username-preview").text( $("#username").val());
             }
