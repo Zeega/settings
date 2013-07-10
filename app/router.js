@@ -14,8 +14,9 @@ function(app, Initializer) {
         routes: {
             "": "index",
             "settings": "settings",
-            "social": "social",
-            "register": "register"
+            "register/social": "social",
+            "register": "register",
+            "register/": "register"
         },
 
         index: function() {

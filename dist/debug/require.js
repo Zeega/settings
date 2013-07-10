@@ -17127,20 +17127,22 @@ function( app, User ) {
 
     return Backbone.View.extend({
 
-        el: $(".page-social .wrapper"),
+        el: $("body"),
 
         valid: true,
         isValidating: false,
         
         initialize: function() {
             this.model = new User();
+            this.$("label[for*='zeega_user_registration_social_username']").append(" <span class='username-validation'></span>");
+            $(".username-preview").text( $("#zeega_user_registration_social_username").val());
         },
 
         events: {
             "click .submit": "settingsSubmit",
-            "blur #form_username": "validateUsername",
-            "keydown #form_username": "onUsernameKeydown",
-            "paste #form_username": "onPaste",
+            "blur #zeega_user_registration_social_username": "validateUsername",
+            "keyup #zeega_user_registration_social_username": "onUsernameKeydown",
+            "paste #zeega_user_registration_social_username": "onPaste",
             "keydown input": "onAnyInput"
         },
 
@@ -17154,10 +17156,10 @@ function( app, User ) {
         onPaste: function() {
             $(".username-validation").empty();
             _.delay(function() {
-                var pastedContent = $("#form_username").val(),
+                var pastedContent = $("#zeega_user_registration_social_username").val(),
                     cleansedContent = pastedContent.replace(/[^a-z0-9]/gi,"");
 
-                $("#form_username").val( cleansedContent );
+                $("#zeega_user_registration_social_username").val( cleansedContent );
             }, 250 );
         },
 
@@ -17171,7 +17173,7 @@ function( app, User ) {
             $(".username-validation").empty();
             
             if ( isOkay ) {
-                $(".username-preview").text( $("#form_username").val());
+                $(".username-preview").text( $("#zeega_user_registration_social_username").val());
             }
 
             return isOkay;
@@ -17181,21 +17183,21 @@ function( app, User ) {
             this.isValidating = true;
 
             // broken in prod because of XDomain issues - 401
-            $.post( app.metadata.api + "users/validate",{ username: this.$("#form_username").val() }, function(data) {
+            $.post( app.metadata.api + "users/validate",{ username: this.$("#zeega_user_registration_social_username").val() }, function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.model.trigger("validated");
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
-                    $("#form_username").removeClass("error");
+                    $("#zeega_user_registration_social_username").removeClass("error");
                 } else {
                     this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
-                    $("#form_username").addClass("error");
+                    $("#zeega_user_registration_social_username").addClass("error");
                 }
             }.bind(this))
             .fail(function( e ) {
                 console.log("validation fail. Details:", e);
                 this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
-                $("#form_username").addClass("error");
+                $("#zeega_user_registration_social_username").addClass("error");
                 // this.valid = true; // rm this. invalid. for testing
             }.bind(this))
             .always(function() {
@@ -17217,7 +17219,7 @@ function( app, User ) {
         saveUserModel: function() {
             this.model.save({
                 display_name: this.$("#display-name").val(),
-                username: this.$("#form_username").val(),
+                username: this.$("#zeega_user_registration_social_username").val(),
                 email: this.$("#email").val(),
                 password: this.$("#password").val()
             });
@@ -17257,7 +17259,7 @@ function( app, User ) {
         events: {
             "click .submit": "settingsSubmit",
             "blur #fos_user_registration_form_username": "validateUsername",
-            "keydown #fos_user_registration_form_username": "onUsernameKeydown",
+            "keyup #fos_user_registration_form_username": "onUsernameKeydown",
             "paste #fos_user_registration_form_username": "onPaste"
         },
 
@@ -17295,16 +17297,16 @@ function( app, User ) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.model.trigger("validated");
-                    this.$(".username-validation").html("— <span class='valid'>ok!</span>");
+                    this.$(".username-validation").html("<span class='valid'>ok!</span><br>");
                     $("#fos_user_registration_form_username").removeClass("error");
                 } else {
-                    this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
+                    this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span><br>");
                     $("#fos_user_registration_form_username").addClass("error");
                 }
             }.bind(this))
             .fail(function( e ) {
                 console.log("validation fail. Details:", e);
-                this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
+                this.$(".username-validation").html("<span class='invalid'>Validation failed. Try again?</span><br>");
                 $("#fos_user_registration_form_username").addClass("error");
                 // this.valid = true; // rm this. invalid. for testing
             }.bind(this))
@@ -17579,8 +17581,9 @@ function(app, Initializer) {
         routes: {
             "": "index",
             "settings": "settings",
-            "social": "social",
-            "register": "register"
+            "register/social": "social",
+            "register": "register",
+            "register/": "register"
         },
 
         index: function() {
