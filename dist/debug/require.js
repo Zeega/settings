@@ -17461,7 +17461,7 @@ function(app, Initializer) {
         routes: {
             "": "index",
             "settings": "settings",
-            "social": "social"
+            "social": "register/social"
         },
 
         index: function() {
