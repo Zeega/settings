@@ -17127,19 +17127,21 @@ function( app, User ) {
 
     return Backbone.View.extend({
 
-        el: $(".page-social .wrapper"),
+        el: $("body"),
 
         valid: true,
         isValidating: false,
         
         initialize: function() {
             this.model = new User();
+            this.$("label[for*='zeega_user_registration_social_username']").append(" <span class='username-validation'></span>");
+        
         },
 
         events: {
             "click .submit": "settingsSubmit",
             "blur #zeega_user_registration_social_username": "validateUsername",
-            "keydown #zeega_user_registration_social_username": "onUsernameKeydown",
+            "keyup #zeega_user_registration_social_username": "onUsernameKeydown",
             "paste #zeega_user_registration_social_username": "onPaste",
             "keydown input": "onAnyInput"
         },
