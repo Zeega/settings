@@ -19,7 +19,7 @@ function( app, User ) {
         initialize: function() {
             this.model = new User();
             this.$("label[for*='zeega_user_registration_social_username']").append(" <span class='username-validation'></span>");
-        
+            $(".username-preview").text( $("#zeega_user_registration_social_username").val());
         },
 
         events: {

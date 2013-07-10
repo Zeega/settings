@@ -17135,7 +17135,7 @@ function( app, User ) {
         initialize: function() {
             this.model = new User();
             this.$("label[for*='zeega_user_registration_social_username']").append(" <span class='username-validation'></span>");
-        
+            $(".username-preview").text( $("#zeega_user_registration_social_username").val());
         },
 
         events: {
@@ -17259,7 +17259,7 @@ function( app, User ) {
         events: {
             "click .submit": "settingsSubmit",
             "blur #fos_user_registration_form_username": "validateUsername",
-            "keydown #fos_user_registration_form_username": "onUsernameKeydown",
+            "keyup #fos_user_registration_form_username": "onUsernameKeydown",
             "paste #fos_user_registration_form_username": "onPaste"
         },
 
@@ -17297,16 +17297,16 @@ function( app, User ) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.model.trigger("validated");
-                    this.$(".username-validation").html("— <span class='valid'>ok!</span>");
+                    this.$(".username-validation").html("<span class='valid'>ok!</span><br>");
                     $("#fos_user_registration_form_username").removeClass("error");
                 } else {
-                    this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
+                    this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span><br>");
                     $("#fos_user_registration_form_username").addClass("error");
                 }
             }.bind(this))
             .fail(function( e ) {
                 console.log("validation fail. Details:", e);
-                this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
+                this.$(".username-validation").html("<span class='invalid'>Validation failed. Try again?</span><br>");
                 $("#fos_user_registration_form_username").addClass("error");
                 // this.valid = true; // rm this. invalid. for testing
             }.bind(this))
@@ -17582,7 +17582,8 @@ function(app, Initializer) {
             "": "index",
             "settings": "settings",
             "register/social": "social",
-            "register": "register"
+            "register": "register",
+            "register/": "register"
         },
 
         index: function() {

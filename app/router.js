@@ -15,7 +15,8 @@ function(app, Initializer) {
             "": "index",
             "settings": "settings",
             "register/social": "social",
-            "register": "register"
+            "register": "register",
+            "register/": "register"
         },
 
         index: function() {
