@@ -14,7 +14,8 @@ function(app, Initializer) {
         routes: {
             "": "index",
             "settings": "settings",
-            "social": "social"
+            "social": "social",
+            "register": "register"
         },
 
         index: function() {
@@ -32,8 +33,13 @@ function(app, Initializer) {
             this.init();
         },
 
+        register: function() {
+            app.page = "register";
+            this.init();
+        },
+
         init: _.once(function() {
-            $("body").addClass("page-" + app.page )
+            $("html").addClass("page-" + app.page );
             new Initializer();
         })
 

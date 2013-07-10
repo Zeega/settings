@@ -14,6 +14,10 @@
     -webkit-transition: all 0.5s;
     display: inline-block;
 
+    &:hover {
+        box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.25);
+    }
+
     &.join-zeega{
         font-size: 25px;
         background-color: red;
@@ -76,5 +80,34 @@
 
     &.btnz-flat {
         box-shadow: none;
+    }
+
+    &.btnz-facebook {
+        background-color: #3a589d;
+
+        .social-signin-facebook {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background-size: 50px 25px;
+            background-image: url('../img/social-signin.png');
+            position: relative;
+            top: 4px;
+        }
+    }
+
+    &.btnz-twitter {
+        background-color: #3b8ece;
+
+        .social-signin-twitter {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background-size: 50px 25px;
+            background-position: -25px 0;
+            background-image: url('../img/social-signin.png');
+            position: relative;
+            top: 4px;
+        }
     }
 }

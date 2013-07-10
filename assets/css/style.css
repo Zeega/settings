@@ -1378,6 +1378,9 @@ header.ZEEGA-HEAD .head-nav.nav-right li {
   -webkit-transition: all 0.5s;
   display: inline-block;
 }
+.btnz:hover {
+  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.25);
+}
 .btnz.join-zeega {
   font-size: 25px;
   background-color: red;
@@ -1430,6 +1433,31 @@ header.ZEEGA-HEAD .head-nav.nav-right li {
 }
 .btnz.btnz-flat {
   box-shadow: none;
+}
+.btnz.btnz-facebook {
+  background-color: #3a589d;
+}
+.btnz.btnz-facebook .social-signin-facebook {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-size: 50px 25px;
+  background-image: url('../img/social-signin.png');
+  position: relative;
+  top: 4px;
+}
+.btnz.btnz-twitter {
+  background-color: #3b8ece;
+}
+.btnz.btnz-twitter .social-signin-twitter {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-size: 50px 25px;
+  background-position: -25px 0;
+  background-image: url('../img/social-signin.png');
+  position: relative;
+  top: 4px;
 }
 .profile-token {
   background: url(../img/default_profile.jpg) no-repeat;
@@ -1563,4 +1591,110 @@ a.tag-link:hover {
   font-family: "futura", sans-serif;
   font-size: 18px;
   margin-top: 20px;
+}
+.page-register {
+  background: url("../img/astronaut.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+.page-register .bg-overlay {
+  background: url("../img/tiny-stripes.png");
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
+.page-register fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.page-register .container {
+  padding: 20px;
+}
+.page-register .container-inner {
+  width: 960px;
+  background: rgba(255, 255, 255, 0.85);
+  margin: 0 auto;
+  margin-top: 70px;
+  padding: 40px 20px;
+  border-radius: 2px;
+}
+.page-register .container .btnz {
+  font-size: 1.5em;
+}
+.page-register .container h1 {
+  margin: 0 0 60px 0;
+}
+.page-register .container h3 {
+  margin: 0 0 1em 0;
+}
+.page-register .col-left {
+  float: left;
+  width: 46%;
+}
+.page-register .col-left .btnz {
+  width: 75%;
+  display: block;
+  padding-bottom: 18px;
+  text-align: left;
+  margin-bottom: 10px;
+}
+.page-register .col-left .btnz .social-signin-twitter,
+.page-register .col-left .btnz .social-signin-facebook {
+  margin: 0 10px;
+}
+.page-register .col-middle {
+  float: left;
+}
+.page-register .col-right {
+  float: right;
+  width: 45%;
+}
+.page-register input {
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  width: 75%;
+  font-size: 1.1em;
+  padding: 5px 10px;
+  border-radius: 2px;
+}
+.page-register .login-link {
+  display: inline-block;
+  width: 75%;
+  margin-bottom: 10px;
+}
+.page-register .login-link img {
+  width: 100%;
+}
+.page-register .fine-print {
+  font-size: 10px;
+  color: #999;
+}
+.page-register .errors ul {
+  width: 300px;
+  color: red;
+  padding-left: 58%;
+}
+.page-register .help-block {
+  font-family: "helvetica", sans-serif;
+  font-size: 12px;
+}
+.page-register .help-block .valid {
+  color: limegreen;
+}
+.page-register .help-block .invalid {
+  color: orangered;
+}
+.page-register .btnz-submit {
+  width: 307px;
+  background-color: limegreen;
+  padding: 20px;
+  display: inline-block;
+  padding-top: 10px;
+}
+.page-register .btnz-submit:hover {
+  background-color: #6FF;
 }
