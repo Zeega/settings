@@ -17026,7 +17026,7 @@ function( app ) {
             this.isValidating = true;
 
             // broken in prod because of XDomain issues - 401
-            $.post( app.metadata.api + "users/validate",{ username: this.$("#username").val() }, function(data) {
+            $.get( app.metadata.api + "users/validate/" + this.$("#username").val(), function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.model.trigger("validated");
@@ -17183,7 +17183,7 @@ function( app, User ) {
             this.isValidating = true;
 
             // broken in prod because of XDomain issues - 401
-            $.post( app.metadata.api + "users/validate",{ username: this.$("#zeega_user_registration_social_username").val() }, function(data) {
+            $.get( app.metadata.api + "users/validate/" + this.$("#zeega_user_registration_social_username").val(), function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.model.trigger("validated");
@@ -17286,21 +17286,27 @@ function( app, User ) {
                 $(".username-preview").text( $("#fos_user_registration_form_username").val());
             }
 
+            this.lazyValidate( this );
+
             return isOkay;
         },
+
+        lazyValidate: _.debounce(function( ctx ) {
+            ctx.validateUsername();
+        }.bind(this), 1000 ),
 
         validateUsername: function() {
             this.isValidating = true;
 
             // broken in prod because of XDomain issues - 401
-            $.post( app.metadata.api + "users/validate",{ username: this.$("#fos_user_registration_form_username").val() }, function(data) {
+            $.get( app.metadata.api + "users/validate/" + this.$("#fos_user_registration_form_username").val(), function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.model.trigger("validated");
-                    this.$(".username-validation").html("<span class='valid'>ok!</span><br>");
+                    this.$(".username-validation").html("<span class='valid'>ok!</span>");
                     $("#fos_user_registration_form_username").removeClass("error");
                 } else {
-                    this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span><br>");
+                    this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span>");
                     $("#fos_user_registration_form_username").addClass("error");
                 }
             }.bind(this))

@@ -1599,6 +1599,9 @@ a.tag-link:hover {
   -o-background-size: cover;
   background-size: cover;
 }
+.page-register #register {
+  position: relative;
+}
 .page-register .bg-overlay {
   background: url("../img/tiny-stripes.png");
   position: fixed;
@@ -1681,6 +1684,8 @@ a.tag-link:hover {
 .page-register .help-block {
   font-family: "helvetica", sans-serif;
   font-size: 12px;
+  position: absolute;
+  top: -35px;
 }
 .page-register .help-block .valid {
   color: limegreen;
