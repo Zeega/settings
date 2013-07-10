@@ -50,8 +50,14 @@ function( app, User ) {
                 $(".username-preview").text( $("#fos_user_registration_form_username").val());
             }
 
+            this.lazyValidate( this );
+
             return isOkay;
         },
+
+        lazyValidate: _.debounce(function( ctx ) {
+            ctx.validateUsername();
+        }.bind(this), 1000 ),
 
         validateUsername: function() {
             this.isValidating = true;
@@ -61,10 +67,10 @@ function( app, User ) {
                 this.valid = data.valid;
                 if ( data.valid ) {
                     this.model.trigger("validated");
-                    this.$(".username-validation").html("<span class='valid'>ok!</span><br>");
+                    this.$(".username-validation").html("<span class='valid'>ok!</span>");
                     $("#fos_user_registration_form_username").removeClass("error");
                 } else {
-                    this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span><br>");
+                    this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span>");
                     $("#fos_user_registration_form_username").addClass("error");
                 }
             }.bind(this))
