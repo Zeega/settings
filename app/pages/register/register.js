@@ -93,6 +93,7 @@ function( app, User ) {
         },
 
         isFormValid: function() {
+
             if ( this.isUsernameValid() && this.isDisplayNameValid().valid && this.isEmailValid() && this.isPasswordValid() ) {
                 this.$(".submit").removeClass("btnz-disabled");
             } else {
@@ -111,9 +112,9 @@ function( app, User ) {
         },
 
         onUsernameKeyup: function( e ) {
+            this.isFormValid();
             $(".username-preview").text( $("#fos_user_registration_form_username").val());
 
-            this.lazyValidate( this );
         },
 
         onUsernameKeydown: function( e ) {
@@ -123,7 +124,10 @@ function( app, User ) {
                 isOkay = isLetter || isNumber;
 
             this.valid = false;
-            $(".username-validation").empty();
+            $(".username-flash").remove();
+
+            if ( $(".help-block").is(":hidden") ) $(".help-block").fadeIn();
+            this.lazyValidate( this );
 
             return isOkay;
         },
@@ -134,21 +138,33 @@ function( app, User ) {
 
         validateUsername: function() {
             this.isValidating = true;
+            this.valid = false;
+
+            this.isFormValid();
 
             if ( this.$("#fos_user_registration_form_username").val().length < 3 ) {
-                this.valid = false;
-                this.$(".username-validation").html("<span class='invalid'>Username too short! It must be at least 3 characters</span>");
+                $(".username-flash").remove();
+                this.$("#fos_user_registration_form_username").after("<div class='username-flash form-error-message'>Username too short! It must be at least 3 characters</div>");
             } else {
 
                 // broken in prod because of XDomain issues - 401
                 $.get( app.metadata.api + "users/validate/" + this.$("#fos_user_registration_form_username").val(), function(data) {
                     this.valid = data.valid;
+                    $(".username-flash").remove();
                     if ( data.valid ) {
                         this.model.trigger("validated");
-                        this.$(".username-validation").html("<span class='valid'>ok!</span>");
+
+
+                        this.$("#fos_user_registration_form_username").after("<div class='username-flash form-success-message'>Username is valid</div>");
+
+
+                        // this.$(".username-validation").html("<span class='valid'>ok!</span>");
                         $("#fos_user_registration_form_username").removeClass("error");
                     } else {
-                        this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span>");
+                        console.log('invalid')
+                        this.$("#fos_user_registration_form_username").after("<div class='username-flash form-error-message'>That username has already been taken :(</div>");
+
+                        // this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span>");
                         $("#fos_user_registration_form_username").addClass("error");
                     }
                 }.bind(this))
