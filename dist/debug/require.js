@@ -17148,9 +17148,7 @@ function( app, User ) {
 
         onAnyInput: function() {
             $(".submit")
-                .text("Save Updates")
-                .addClass("btnz-red")
-                .removeClass("btnz-disabled btnz-success btnz-flat");
+                .text("Save Updates").removeClass("btnz-flat");
         },
 
         onPaste: function() {
@@ -17169,6 +17167,7 @@ function( app, User ) {
                 isNumber = charCode >= 48 && charCode <= 57,
                 isOkay = isLetter || isNumber;
 
+            this.disableSubmit();
             this.valid = false;
             $(".username-validation").empty();
             
@@ -17176,8 +17175,14 @@ function( app, User ) {
                 $(".username-preview").text( $("#zeega_user_registration_social_username").val());
             }
 
+            this.lazyValidate( this );
+
             return isOkay;
         },
+
+        lazyValidate: _.debounce(function( ctx ) {
+            ctx.validateUsername();
+        }.bind(this), 1000 ),
 
         validateUsername: function() {
             this.isValidating = true;
@@ -17186,6 +17191,7 @@ function( app, User ) {
             $.get( app.metadata.api + "users/validate/" + this.$("#zeega_user_registration_social_username").val(), function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
+                    this.enableSubmit();
                     this.model.trigger("validated");
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
                     $("#zeega_user_registration_social_username").removeClass("error");
@@ -17198,7 +17204,6 @@ function( app, User ) {
                 console.log("validation fail. Details:", e);
                 this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
                 $("#zeega_user_registration_social_username").addClass("error");
-                // this.valid = true; // rm this. invalid. for testing
             }.bind(this))
             .always(function() {
                 this.isValidating = false;
@@ -17206,9 +17211,17 @@ function( app, User ) {
             
         },
 
+        enableSubmit: function() {
+            this.$(".submit").removeClass("btnz-disabled");
+        },
+
+        disableSubmit: function() {
+            this.$(".submit").addClass("btnz-disabled");
+        },
+
         settingsSubmit: function() {
 
-            $(".submit").removeClass("btnz-red").addClass("btnz-disabled");
+            $(".submit").addClass("btnz-disabled");
             if ( this.isValidating ) {
                 this.model.once("validated", this.saveUserModel, this);
             } else if ( this.valid ) {
@@ -17256,11 +17269,84 @@ function( app, User ) {
             this.model = new User();
         },
 
+        isUsernameValid: function() {
+            return this.valid;
+        },
+
+        isEmailValid: function() {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            
+            return re.test( this.$("#fos_user_registration_form_email").val() );
+        },
+        isDisplayNameValid: function() {
+            var reason,
+                val = this.$("#fos_user_registration_form_displayName").val(),
+                minLength = val.length > 2,
+                omitsZeega = this.omits( val, "zeega"),
+                omitsAdmin = this.omits( val, "admin");
+                
+            return {
+                valid: minLength && omitsZeega && omitsAdmin,
+                reason: !minLength ? "Username must be at least 3 characters" :
+                        !omitsZeega ? "Cannot contain the word 'zeega'" :
+                        !omitsAdmin ? "Cannot contain the word 'admin'" : "valid"
+            };
+        },
+        isPasswordValid: function() {
+            return this.$("#fos_user_registration_form_plainPassword").val().length > 5;
+        },
+
+        omits: function( string, check ) {
+            var regexp = new RegExp( check, "gi" ),
+                tester = string.match(regexp);
+
+            return tester === null;
+        },
+
         events: {
             "click .submit": "settingsSubmit",
             "blur #fos_user_registration_form_username": "validateUsername",
-            "keyup #fos_user_registration_form_username": "onUsernameKeydown",
-            "paste #fos_user_registration_form_username": "onPaste"
+            "keyup #fos_user_registration_form_username": "onUsernameKeyup",
+            "keydown #fos_user_registration_form_username": "onUsernameKeydown",
+            "paste #fos_user_registration_form_username": "onPaste",
+
+            "keyup #fos_user_registration_form_displayName": "onDisplayNameKeydown",
+            "keyup #fos_user_registration_form_email": "onEmailKeyup",
+            "keyup #fos_user_registration_form_plainPassword": "onPasswordKeyup"
+        },
+
+        onDisplayNameKeydown: function() {
+            var validObj = this.isDisplayNameValid();
+
+            this.$(".displayname-error").remove();
+            if ( !validObj.valid ) {
+                this.$("#fos_user_registration_form_displayName").after("<div class='displayname-error form-error-message'>"+ validObj.reason +"</div>");
+            }
+            this.isFormValid();
+        },
+
+        onEmailKeyup: function() {
+            this.$(".email-error").remove();
+            if ( !this.isEmailValid() ) {
+                this.$("#fos_user_registration_form_email").after("<div class='email-error form-error-message'>Enter a valid email</div>");
+            }
+            this.isFormValid();
+        },
+
+        onPasswordKeyup: function() {
+            this.$(".password-error").remove();
+            if ( !this.isPasswordValid() ) {
+                this.$("#fos_user_registration_form_plainPassword").after("<div class='password-error form-error-message'>Password must be at least 6 characters</div>");
+            }
+            this.isFormValid();
+        },
+
+        isFormValid: function() {
+            if ( this.isUsernameValid() && this.isDisplayNameValid().valid && this.isEmailValid() && this.isPasswordValid() ) {
+                this.$(".submit").removeClass("btnz-disabled");
+            } else {
+                this.$(".submit").addClass("btnz-disabled");
+            }
         },
 
         onPaste: function() {
@@ -17273,6 +17359,12 @@ function( app, User ) {
             }, 250 );
         },
 
+        onUsernameKeyup: function( e ) {
+            $(".username-preview").text( $("#fos_user_registration_form_username").val());
+
+            this.lazyValidate( this );
+        },
+
         onUsernameKeydown: function( e ) {
             var charCode = e.which,
                 isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
@@ -17281,12 +17373,6 @@ function( app, User ) {
 
             this.valid = false;
             $(".username-validation").empty();
-            
-            if ( isOkay ) {
-                $(".username-preview").text( $("#fos_user_registration_form_username").val());
-            }
-
-            this.lazyValidate( this );
 
             return isOkay;
         },
@@ -17298,27 +17384,34 @@ function( app, User ) {
         validateUsername: function() {
             this.isValidating = true;
 
-            // broken in prod because of XDomain issues - 401
-            $.get( app.metadata.api + "users/validate/" + this.$("#fos_user_registration_form_username").val(), function(data) {
-                this.valid = data.valid;
-                if ( data.valid ) {
-                    this.model.trigger("validated");
-                    this.$(".username-validation").html("<span class='valid'>ok!</span>");
-                    $("#fos_user_registration_form_username").removeClass("error");
-                } else {
-                    this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span>");
+            if ( this.$("#fos_user_registration_form_username").val().length < 3 ) {
+                this.valid = false;
+                this.$(".username-validation").html("<span class='invalid'>Username too short! It must be at least 3 characters</span>");
+            } else {
+
+                // broken in prod because of XDomain issues - 401
+                $.get( app.metadata.api + "users/validate/" + this.$("#fos_user_registration_form_username").val(), function(data) {
+                    this.valid = data.valid;
+                    if ( data.valid ) {
+                        this.model.trigger("validated");
+                        this.$(".username-validation").html("<span class='valid'>ok!</span>");
+                        $("#fos_user_registration_form_username").removeClass("error");
+                    } else {
+                        this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span>");
+                        $("#fos_user_registration_form_username").addClass("error");
+                    }
+                }.bind(this))
+                .fail(function( e ) {
+                    console.log("validation fail. Details:", e);
+                    this.$(".username-validation").html("<span class='invalid'>Validation failed. Try again?</span><br>");
                     $("#fos_user_registration_form_username").addClass("error");
-                }
-            }.bind(this))
-            .fail(function( e ) {
-                console.log("validation fail. Details:", e);
-                this.$(".username-validation").html("<span class='invalid'>Validation failed. Try again?</span><br>");
-                $("#fos_user_registration_form_username").addClass("error");
-                // this.valid = true; // rm this. invalid. for testing
-            }.bind(this))
-            .always(function() {
-                this.isValidating = false;
-            }.bind(this));
+                    // this.valid = true; // rm this. invalid. for testing
+                }.bind(this))
+                .always(function() {
+                    this.isValidating = false;
+                    this.isFormValid();
+                }.bind(this));
+            }
             
         },
 
@@ -17587,6 +17680,7 @@ function(app, Initializer) {
         routes: {
             "": "index",
             "settings": "settings",
+            "social": "social", // for dev
             "register/social": "social",
             "register": "register",
             "register/": "register"
@@ -17639,7 +17733,7 @@ function(app, Router) {
 
   // Trigger the initial route and enable HTML5 History API support, set the
   // root folder to '/' by default.  Change in app.js.
-  Backbone.history.start({ pushState: true, root: app.root });
+  Backbone.history.start({ pushState: false, root: app.root });
   window.app = app;
 
   // All navigation that is relative should be passed through the navigate

@@ -1428,8 +1428,9 @@ header.ZEEGA-HEAD .head-nav.nav-right li {
   width: 154px;
 }
 .btnz.btnz-disabled {
-  background-color: #ccc;
+  background-color: #ccc !important;
   box-shadow: none;
+  pointer-events: none;
 }
 .btnz.btnz-flat {
   box-shadow: none;
@@ -1702,4 +1703,10 @@ a.tag-link:hover {
 }
 .page-register .btnz-submit:hover {
   background-color: #6FF;
+}
+.page-register .form-error-message {
+  font-size: 12px;
+  color: red;
+  position: relative;
+  top: -7px;
 }

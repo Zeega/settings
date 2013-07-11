@@ -14,6 +14,7 @@ function(app, Initializer) {
         routes: {
             "": "index",
             "settings": "settings",
+            "social": "social", // for dev
             "register/social": "social",
             "register": "register",
             "register/": "register"

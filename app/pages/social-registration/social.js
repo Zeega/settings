@@ -32,9 +32,7 @@ function( app, User ) {
 
         onAnyInput: function() {
             $(".submit")
-                .text("Save Updates")
-                .addClass("btnz-red")
-                .removeClass("btnz-disabled btnz-success btnz-flat");
+                .text("Save Updates").removeClass("btnz-flat");
         },
 
         onPaste: function() {
@@ -53,6 +51,7 @@ function( app, User ) {
                 isNumber = charCode >= 48 && charCode <= 57,
                 isOkay = isLetter || isNumber;
 
+            this.disableSubmit();
             this.valid = false;
             $(".username-validation").empty();
             
@@ -60,8 +59,14 @@ function( app, User ) {
                 $(".username-preview").text( $("#zeega_user_registration_social_username").val());
             }
 
+            this.lazyValidate( this );
+
             return isOkay;
         },
+
+        lazyValidate: _.debounce(function( ctx ) {
+            ctx.validateUsername();
+        }.bind(this), 1000 ),
 
         validateUsername: function() {
             this.isValidating = true;
@@ -70,6 +75,7 @@ function( app, User ) {
             $.get( app.metadata.api + "users/validate/" + this.$("#zeega_user_registration_social_username").val(), function(data) {
                 this.valid = data.valid;
                 if ( data.valid ) {
+                    this.enableSubmit();
                     this.model.trigger("validated");
                     this.$(".username-validation").html("— <span class='valid'>ok!</span>");
                     $("#zeega_user_registration_social_username").removeClass("error");
@@ -82,7 +88,6 @@ function( app, User ) {
                 console.log("validation fail. Details:", e);
                 this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
                 $("#zeega_user_registration_social_username").addClass("error");
-                // this.valid = true; // rm this. invalid. for testing
             }.bind(this))
             .always(function() {
                 this.isValidating = false;
@@ -90,9 +95,17 @@ function( app, User ) {
             
         },
 
+        enableSubmit: function() {
+            this.$(".submit").removeClass("btnz-disabled");
+        },
+
+        disableSubmit: function() {
+            this.$(".submit").addClass("btnz-disabled");
+        },
+
         settingsSubmit: function() {
 
-            $(".submit").removeClass("btnz-red").addClass("btnz-disabled");
+            $(".submit").addClass("btnz-disabled");
             if ( this.isValidating ) {
                 this.model.once("validated", this.saveUserModel, this);
             } else if ( this.valid ) {
