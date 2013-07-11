@@ -61,7 +61,6 @@ function( app, User ) {
 
         events: {
             "click .submit": "settingsSubmit",
-            "blur #zeega_user_registration_social_username": "validateUsername",
             "keyup #zeega_user_registration_social_username": "onUsernameKeydown",
             "paste #zeega_user_registration_social_username": "onPaste",
             "keyup input": "onAnyInput"

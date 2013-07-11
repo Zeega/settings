@@ -1560,7 +1560,7 @@ a.tag-link:hover {
 .content-wrapper .username-validation .invalid {
   color: red;
 }
-.page-social input {
+.page-social input[type=text] {
   background: #eee;
   width: calc(100% - 20px);
   box-shadow: none;
@@ -1568,7 +1568,7 @@ a.tag-link:hover {
   font-size: 14px;
   height: 2em;
 }
-.page-social input.error {
+.page-social input[type=text].error {
   border-color: red;
 }
 .page-social .username-validation .valid {
@@ -1592,6 +1592,7 @@ a.tag-link:hover {
   font-family: "futura", sans-serif;
   font-size: 18px;
   margin-top: 20px;
+  cursor: pointer;
 }
 .page-register {
   background: url("../img/astronaut.jpg") no-repeat center center fixed;
