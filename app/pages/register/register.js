@@ -29,6 +29,7 @@ function( app, User ) {
             
             return re.test( this.$("#fos_user_registration_form_email").val() );
         },
+
         isDisplayNameValid: function() {
             var reason,
                 val = this.$("#fos_user_registration_form_displayName").val(),
@@ -43,15 +44,16 @@ function( app, User ) {
                         !omitsAdmin ? "Cannot contain the word 'admin'" : "valid"
             };
         },
-        isPasswordValid: function() {
-            return this.$("#fos_user_registration_form_plainPassword").val().length > 5;
-        },
 
         omits: function( string, check ) {
             var regexp = new RegExp( check, "gi" ),
                 tester = string.match(regexp);
 
             return tester === null;
+        },
+
+        isPasswordValid: function() {
+            return this.$("#fos_user_registration_form_plainPassword").val().length > 5;
         },
 
         events: {
@@ -200,7 +202,6 @@ function( app, User ) {
                 password: this.$("#password").val()
             });
             $(".submit")
-                .text("Updates Saved!")
                 .addClass("btnz-success btnz-flat")
                 .removeClass("btnz-disabled");
         }

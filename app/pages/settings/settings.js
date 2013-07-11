@@ -14,6 +14,10 @@ function( app ) {
         className: "settings",
         valid: true,
         isValidating: false,
+
+        initialize: function() {
+            console.log("init")
+        },
         
         serialize: function() {
 
@@ -26,19 +30,58 @@ function( app ) {
             );
         },
 
+        isEmailValid: function() {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            
+            return re.test( this.$("#form_email").val() );
+        },
+
+        isUsernameValid: function() {
+            var reason,
+                val = this.$("#zeega_user_registration_social_username").val(),
+                minLength = val.length > 2,
+                omitsZeega = this.omits( val, "zeega"),
+                omitsAdmin = this.omits( val, "admin");
+                
+            return {
+                valid: minLength && omitsZeega && omitsAdmin,
+                reason: !minLength ? "Username must be at least 3 characters" :
+                        !omitsZeega ? "Cannot contain the word 'zeega'" :
+                        !omitsAdmin ? "Cannot contain the word 'admin'" : "valid"
+            };
+        },
+
+        omits: function( string, check ) {
+            var regexp = new RegExp( check, "gi" ),
+                tester = string.match(regexp);
+
+            return tester === null;
+        },
+
+        isFormValid: function() {
+
+            if ( this.isUsernameValid().valid && this.isEmailValid() ) {
+                this.$(".submit").removeClass("btnz-disabled");
+            } else {
+                this.$(".submit").addClass("btnz-disabled");
+            }
+        },
+
         events: {
             "click .settings-submit": "settingsSubmit",
             "blur #username": "validateUsername",
             "keydown #username": "onUsernameKeydown",
             "paste #username": "onPaste",
-            "keydown input": "onAnyInput"
+            "keyup input": "onAnyInput"
         },
 
         onAnyInput: function() {
-            $(".settings-submit")
-                .text("Save Updates")
-                .addClass("btnz-red")
-                .removeClass("btnz-disabled btnz-success btnz-flat");
+            // $(".settings-submit")
+            //     .text("Save Updates")
+            //     .addClass("btnz-red")
+            //     .removeClass("btnz-disabled btnz-success btnz-flat");
+console.log('is vldi?')
+            this.isFormValid();
         },
 
         onPaste: function() {
