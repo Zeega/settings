@@ -17002,6 +17002,9 @@ function( app ) {
                     this.validate = this.plaintext;
             }
 
+            if ( this.get("type") == "username") this.valid = true
+            else this.validate();
+
             this.on("change:valid", this.onValidChange, this );
         },
 
@@ -17191,9 +17194,7 @@ function( Facet ) {
         model: Facet,
 
         isValid: function() {
-            // var facetsValid = this.pluck("valid");
-            // var test = _.every( facetsValid, Boolean );
-            //console.log("is valid:", this.pluck("valid"), test, _.isBoolean(test) );
+            // console.log("is valid:", this.pluck("valid"), _.every( this.pluck("valid"), Boolean ));
             return _.every( this.pluck("valid"), Boolean );
         },
 
@@ -17306,7 +17307,7 @@ function( app, Validator ) {
         },
 
         onValidation: function( response ) {
-
+console.log("on validation", response)
             if ( response.valid ) {
                 this.$(".settings-submit").removeClass("btnz-disabled").addClass("btnz-green");
             } else {

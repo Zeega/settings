@@ -60,7 +60,7 @@ function( app, Validator ) {
         },
 
         onValidation: function( response ) {
-
+console.log("on validation", response)
             if ( response.valid ) {
                 this.$(".settings-submit").removeClass("btnz-disabled").addClass("btnz-green");
             } else {

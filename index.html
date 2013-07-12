@@ -1,128 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
-    <head>
+    <meta name="zeega" content="zeega-home"
+        data-directory="jmongo/web/"
+        data-hostname="//dev.zeega.com/"
+        data-api= "http://dev.zeega.com/jmongo/web/api/"
+        data-root= ""
+        data-tags="homepage"
+        data-user-id="-1"
+        data-profile-id="51afee2c8d34d4d711000e93"
+        data-media-server= "http://dev.zeega.com/kinok/"
+        data-path="/"
+    />
 
-        <link rel="icon" type="image/png" href="/jmongo/web/images/zeega.ico">
-        <title>Zeega</title>
+    <title>Zeega Settings</title>
 
-        <meta name="description" content="Zeega is a new form of interactive media, enabling anyone to express themselves by easily combining media from the cloud. Make the web you want.">
-        <meta name="keywords" content="zeega, interactive, gif, audio">
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Application styles. -->
 
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
+    <!--(if target release)>
+    <link rel="stylesheet" href="release.css">
+    <!(endif)-->
 
-        <meta id="viewport" name="viewport" content="
-            width=320,
-            initial-scale=1.0,
-            maximum-scale=1.0,
-            user-scalable=0"
-        />
+    <!--(if target debug)>
+    <link rel="stylesheet" href="debug.css">
+    <!(endif)-->
 
-        <meta name="zeega" content="zeega-home"
-            data-directory="jmongo/web/"
-            data-hostname="//dev.zeega.com/"
-            data-api= "http://dev.zeega.com/jmongo/web/api/"
-            data-root= ""
-            data-tags="homepage"
-            data-user-id="-1"
-            data-profile-id="51afee2c8d34d4d711000e93"
-            data-media-server= "http://dev.zeega.com/kinok/"
-            data-path="/"
-        />
+    <!--(if target dummy)><!-->
+<!--
+    <link rel="stylesheet" href="/assets/css/style.css">
+-->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!--<!(endif)-->
+    <script>
+        var profileData ="\x7B\x0A\x09\x09\x22id\x22\x20\x3A\x20\x2251afee2c8d34d4d711000e93\x22,\x0A\x09\x22bio\x22\x20\x3A\x20\x22One\x20time\x20flying\x20trapeze\x20artist.\x20\x5Cu00a0Currently,\x20trapeze\x20artist.\x22,\x0A\x09\x22display_name\x22\x20\x3A\x20\x22James\x20Burns\x22,\x0A\x09\x22thumbnail_url\x22\x20\x3A\x20\x22http\x3A\x5C\x2F\x5C\x2Fstatic.zeega.org\x5C\x2Fcommunity\x5C\x2Fusers\x5C\x2F6\x5C\x2Fprofile\x5C\x2F5117fb5023f85.jpg\x22,\x0A\x09\x22location\x22\x20\x3A\x20null,\x0A\x09\x22created_at\x22\x20\x3A\x20\x222012\x2D02\x2D06\x22,\x0A\x09\x22locationLatitude\x22\x20\x3A\x20null,\x0A\x09\x22locationLongitude\x22\x20\x3A\x20null,\x0A\x09\x22editable\x22\x20\x3A\x20true,\x0A\x09\x22background_image_url\x22\x20\x3A\x20\x22http\x3A\x5C\x2F\x5C\x2Fzeegaimages1.s3.amazonaws.com\x5C\x2F935b2280b9e47b2dbb681bc2dd2883c2_7.png\x22\x0A\x09\x0A\x09\x09\x7D\x0A";
+    </script>
+</head>
 
-        <link rel="shortcut icon" type="image/x-icon" href="/images/zeega.ico"> 
+<body>
+
+    <header class="ZEEGA-HEAD">
+        <!-- logged in nav -->
+        <ul class="head-nav nav-left">
+            <li class="tab">
+                <a href="http://www.zeega.com" class="ZEEGA-tab">
+                    <span class="ZTab-logo"></span>
+                </a>
+            </li>
+            <li>
+                <a class="logged-in-user" data-bypass="true" >
+                    <span class="profile-token" style="
+                        background-image:url(http://static.zeega.org/community/users/6/profile/5117fb5023f85.jpg);
+                        background-size: cover;
+                    "></span>
+                </a>
+            </li>
+            <li>
+                <a class="btnz login" href="http://dev.zeega.com/jmongo/web/logout">Logout</a>
+            </li>
+        </ul>
+
+        <ul class="head-nav nav-right">
+            <li>
+                <a class="btnz create-a-zeega" href="http://www.zeega.com/project/new" > Create A New Zeega</a>
+            </li>
+        </ul>
         
-        <link rel="stylesheet" href="assets/css/style.css">
+        <!--end logged in nav -->
+        <!-- logged out nav -->
+        <!-- <a class="btnz login" href="http://dev.zeega.com/jmongo/web/login">Login</a> -->
+        <!-- end logged out nav -->
+    </header>
+    
+    <!-- Main container. -->
+    <div role="main" id="main"></div>
 
-    </head>
-    <body>
-
-        <div class="bg-overlay"></div>
-
-        <header class="ZEEGA-HEAD">
-            <!-- logged in nav -->
-            <ul class="head-nav nav-left">
-                <li class="tab">
-                    <a href="http://www.zeega.com" class="ZEEGA-tab">
-                        <span class="ZTab-logo"></span>
-                    </a>
-                </li>
-                <li>
-                    <a class="logged-in-user" data-bypass="true" >
-                        <span class="profile-token" style="
-                            background-image:url(http://static.zeega.org/community/users/6/profile/5117fb5023f85.jpg);
-                            background-size: cover;
-                        "></span>
-                    </a>
-                </li>
-                <li>
-                    <a class="btnz login" href="http://dev.zeega.com/jmongo/web/logout">Logout</a>
-                </li>
-            </ul>
-
-            <ul class="head-nav nav-right">
-                <li>
-                    <a class="btnz btnz-red create-a-zeega" href="http://www.zeega.com/project/new" > Create A New Zeega</a>
-                </li>
-            </ul>
-            
-            <!--end logged in nav -->
-            <!-- logged out nav -->
-            <!-- <a class="btnz login" href="http://dev.zeega.com/jmongo/web/login">Login</a> -->
-            <!-- end logged out nav -->
-        </header>
-
-        <div class="container">
-            <div class="container-inner clearfix">
-
-                <div class="upper clearfix">
-                    <h1>Join Zeega!</h1>
-                    <div class="errors"></div>
-                    <div class="col-left">
-                        <div id="fb-root"></div>
-                        <a href="#" onclick="fb_login();" class="btnz btnz-facebook"><i class="social-signin-facebook"></i> Sign Up With Facebook</a>
-                        <a href="/jmongo/web/connect/twitter" class="btnz btnz-twitter"><i class="social-signin-twitter"></i> Sign Up With Twitter</a>
-                    </div>
-                    <div class="col-middle"><h2>or</h2></div>
-                    
-                        <div class="col-right">
-                            <form id="register" action="/jmongo/web/register/"  method="POST" class="form-vertical">
-                            <fieldset>
-                                
-                                <span class="help-block">
-                                    Your new home on Zeega: http://zeega.com/@<span class="username-preview"></span>
-                                </span>
-                                <input type="text" id="fos_user_registration_form_username" name="fos_user_registration_form[username]" required="required"    class="input-xlarge-custom" placeholder="Username" />
-
-                                <input type="text" id="fos_user_registration_form_displayName" name="fos_user_registration_form[displayName]" required="required"    class="input-xlarge-custom" placeholder="Your Name" />
-                                
-                                <input type="email" id="fos_user_registration_form_email" name="fos_user_registration_form[email]" required="required"    class="input-xlarge-custom" placeholder="Your Email" />
-                                <input type="password" id="fos_user_registration_form_plainPassword" name="fos_user_registration_form[plainPassword]" required="required"    class="input-xlarge-custom" placeholder="Create a Password" />
-                                <br/>
-                                <a href="#" onclick="document.getElementById('register').submit();" class="submit btnz btnz-submit btnz-disabled">Do it!</a>
-                                <p class="fine-print">by creating an account, you are agreeing to abide by our <a href="http://blog.zeega.com/terms">terms of service</a></p>
-                                <input type="hidden" id="fos_user_registration_form__token" name="fos_user_registration_form[_token]" value="5451b2848d1ea5fc827a49903248fdcca772d0e2" />
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="lower">
-                    <h5>already have an account? <a href="/jmongo/web/login">Sign In</a></h5>
-                </div>
-            </div>
-        </div>
-
-        <script data-main="/app/config" src="/vendor/js/libs/require.js"></script>
-
-
-    </body>
+    <!-- Application source. -->
+    <script data-main="/app/config" src="/vendor/js/libs/require.js"></script>
+    <!--
+    <script  src="dist/release/require.js"></script>
+    -->
+</body>
 </html>

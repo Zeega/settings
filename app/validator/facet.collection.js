@@ -10,9 +10,7 @@ function( Facet ) {
         model: Facet,
 
         isValid: function() {
-            // var facetsValid = this.pluck("valid");
-            // var test = _.every( facetsValid, Boolean );
-            //console.log("is valid:", this.pluck("valid"), test, _.isBoolean(test) );
+            // console.log("is valid:", this.pluck("valid"), _.every( this.pluck("valid"), Boolean ));
             return _.every( this.pluck("valid"), Boolean );
         },
 
