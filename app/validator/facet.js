@@ -120,32 +120,35 @@ function( app ) {
         },
 
         username: function( value ) {
-            var usernameValid, validString = this.plaintext();
-            
-            if ( validString ) {
-                this.checkUsername( this.get("$el").val(), this );
-            } else return false;
+            this.checkUsername( this.get("$el").val(), this );
         },
 
         checkUsername: _.debounce(function( value, ctx ) {
 
-            $.get( app.metadata.api + "users/validate/" + value, function( data ) {
-                
-                ctx.valid = data.valid;
-                
+            if ( this.plaintext() ) {
+                $.get( app.metadata.api + "users/validate/" + value, function( data ) {
+                    
+                    ctx.valid = data.valid;
+                    
+                    ctx.set({
+                        valid: data.valid,
+                        _flash: data.valid ? null : "That username is already in use :("
+                    })
+                    ctx.trigger("validated");
+
+                }.bind(ctx))
+                .fail(function( e ) {
+
+                }.bind(ctx))
+                .always(function() {
+
+                }.bind(ctx));
+            } else {
                 ctx.set({
-                    valid: data.valid,
-                    _flash: data.valid ? "Ok!" : "That username is already in use :("
+                    valid: false
                 })
                 ctx.trigger("validated");
-
-            }.bind(ctx))
-            .fail(function( e ) {
-
-            }.bind(ctx))
-            .always(function() {
-
-            }.bind(ctx));
+            }
         }, 750 ),
 
 

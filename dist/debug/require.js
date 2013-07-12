@@ -17075,32 +17075,35 @@ function( app ) {
         },
 
         username: function( value ) {
-            var usernameValid, validString = this.plaintext();
-            
-            if ( validString ) {
-                this.checkUsername( this.get("$el").val(), this );
-            } else return false;
+            this.checkUsername( this.get("$el").val(), this );
         },
 
         checkUsername: _.debounce(function( value, ctx ) {
 
-            $.get( app.metadata.api + "users/validate/" + value, function( data ) {
-                
-                ctx.valid = data.valid;
-                
+            if ( this.plaintext() ) {
+                $.get( app.metadata.api + "users/validate/" + value, function( data ) {
+                    
+                    ctx.valid = data.valid;
+                    
+                    ctx.set({
+                        valid: data.valid,
+                        _flash: data.valid ? null : "That username is already in use :("
+                    })
+                    ctx.trigger("validated");
+
+                }.bind(ctx))
+                .fail(function( e ) {
+
+                }.bind(ctx))
+                .always(function() {
+
+                }.bind(ctx));
+            } else {
                 ctx.set({
-                    valid: data.valid,
-                    _flash: data.valid ? "Ok!" : "That username is already in use :("
+                    valid: false
                 })
                 ctx.trigger("validated");
-
-            }.bind(ctx))
-            .fail(function( e ) {
-
-            }.bind(ctx))
-            .always(function() {
-
-            }.bind(ctx));
+            }
         }, 750 ),
 
 
@@ -17389,10 +17392,11 @@ function( app ) {
 define('pages/social-registration/social',[
     "app",
     "modules/user.model",
+    "validator/validator",
     "backbone"
 ],
 
-function( app, User ) {
+function( app, User, Validator ) {
 
     // TODO
     // validate email address
@@ -17401,46 +17405,37 @@ function( app, User ) {
 
         el: $("body"),
 
-        valid: true,
-        isValidating: false,
+        validator: null,
         
         initialize: function() {
             this.model = new User();
             this.$("label[for*='zeega_user_registration_social_username']").append(" <span class='username-validation'></span>");
             $(".username-preview").text( $("#zeega_user_registration_social_username").val());
+
+            this.initValidation();
         },
 
-        isEmailValid: function() {
-            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            
-            return re.test( this.$("#form_email").val() );
+        initValidation: function() {
+            this.validator = new Validator({
+                facets:[
+                    {
+                        type: "email",
+                        $el: this.$("#form_email")
+                    }, {
+                        type: "username",
+                        $el: this.$("#zeega_user_registration_social_username"),
+                        omits: "zeega,admin",
+                        minLength: 3
+                    }
+                ]
+            });
+
+            this.validator.on("validated", this.onValidation, this );
         },
 
-        isUsernameValid: function() {
-            var reason,
-                val = this.$("#zeega_user_registration_social_username").val(),
-                minLength = val.length > 2,
-                omitsZeega = this.omits( val, "zeega"),
-                omitsAdmin = this.omits( val, "admin");
-                
-            return {
-                valid: minLength && omitsZeega && omitsAdmin && this.valid,
-                reason: !minLength ? "Username must be at least 3 characters" :
-                        !omitsZeega ? "Cannot contain the word 'zeega'" :
-                        !omitsAdmin ? "Cannot contain the word 'admin'" : "valid"
-            };
-        },
+        onValidation: function( response ) {
 
-        omits: function( string, check ) {
-            var regexp = new RegExp( check, "gi" ),
-                tester = string.match(regexp);
-
-            return tester === null;
-        },
-
-        isFormValid: function() {
-
-            if ( this.isUsernameValid().valid && this.isEmailValid() ) {
+            if ( response.valid ) {
                 this.$(".submit").removeClass("btnz-disabled");
             } else {
                 this.$(".submit").addClass("btnz-disabled");
@@ -17448,27 +17443,8 @@ function( app, User ) {
         },
 
         events: {
-            "click .submit": "settingsSubmit",
+            "click .submit": "saveUserModel",
             "keyup #zeega_user_registration_social_username": "onUsernameKeydown",
-            "paste #zeega_user_registration_social_username": "onPaste",
-            "keyup input": "onAnyInput"
-        },
-
-        onAnyInput: function() {
-            $(".submit")
-                .text("Save Updates").removeClass("btnz-flat");
-
-            this.isFormValid();
-        },
-
-        onPaste: function() {
-            $(".username-validation").empty();
-            _.delay(function() {
-                var pastedContent = $("#zeega_user_registration_social_username").val(),
-                    cleansedContent = pastedContent.replace(/[^a-z0-9]/gi,"");
-
-                $("#zeega_user_registration_social_username").val( cleansedContent );
-            }, 250 );
         },
 
         onUsernameKeydown: function( e ) {
@@ -17477,71 +17453,7 @@ function( app, User ) {
                 isNumber = charCode >= 48 && charCode <= 57,
                 isOkay = isLetter || isNumber;
 
-            this.valid = false;
-            $(".username-validation").empty();
-            
-            if ( isOkay ) {
-                $(".username-preview").text( $("#zeega_user_registration_social_username").val());
-            }
-
-            this.lazyValidate( this );
-            this.disableSubmit();
-
             return isOkay;
-        },
-
-        lazyValidate: _.debounce(function( ctx ) {
-            ctx.validateUsername();
-        }.bind(this), 1000 ),
-
-        validateUsername: function() {
-            this.isValidating = true;
-
-            if ( this.$("#zeega_user_registration_social_username").val().length < 3 ) {
-                this.$(".username-validation").html("— <span class='invalid'>Your username must be at least 3 characters</span>");
-                $("#zeega_user_registration_social_username").addClass("error");
-            } else {
-
-                // broken in prod because of XDomain issues - 401
-                $.get( app.metadata.api + "users/validate/" + this.$("#zeega_user_registration_social_username").val(), function(data) {
-                    this.valid = data.valid;
-                    if ( data.valid ) {
-                        this.enableSubmit();
-                        this.model.trigger("validated");
-                        this.$(".username-validation").html("— <span class='valid'>ok!</span>");
-                        $("#zeega_user_registration_social_username").removeClass("error");
-                    } else {
-                        this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
-                        $("#zeega_user_registration_social_username").addClass("error");
-                    }
-                }.bind(this))
-                .fail(function( e ) {
-                    console.log("validation fail. Details:", e);
-                    this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
-                    $("#zeega_user_registration_social_username").addClass("error");
-                }.bind(this))
-                .always(function() {
-                    this.isValidating = false;
-                }.bind(this));
-            }
-        },
-
-        enableSubmit: function() {
-            this.$(".submit").removeClass("btnz-disabled");
-        },
-
-        disableSubmit: function() {
-            this.$(".submit").addClass("btnz-disabled");
-        },
-
-        settingsSubmit: function() {
-
-            $(".submit").addClass("btnz-disabled");
-            if ( this.isValidating ) {
-                this.model.once("validated", this.saveUserModel, this);
-            } else if ( this.valid ) {
-               this.saveUserModel();
-            }
         },
 
         saveUserModel: function() {
