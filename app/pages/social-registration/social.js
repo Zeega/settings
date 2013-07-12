@@ -26,7 +26,7 @@ function( app, User, Validator ) {
                 facets:[
                     {
                         type: "email",
-                        $el: this.$("#form_email")
+                        $el: this.$("#zeega_user_registration_social_email")
                     }, {
                         type: "username",
                         $el: this.$("#zeega_user_registration_social_username"),
