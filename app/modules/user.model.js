@@ -24,7 +24,9 @@ function( app ) {
         },
 
         url: function() {
-            return app.metadata.api + "users/" + this.id;
+            var https = app.metadata.api.replace("https","http").replace("http","https");
+
+            return https + "users/" + this.id;
         },
 
         initialize: function() {

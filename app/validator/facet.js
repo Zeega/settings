@@ -74,23 +74,26 @@ function( app ) {
                 minlength = true,
                 maxlength = true,
                 value = this.get("$el").val(),
-                flash,
+                flash = null,
                 validation;
 
             // contains
             if ( this.get("contains") ) {
                 
             }
-            // omits
-            if ( this.get("omits") ) {
-                omits = this.omits( value, this.get("omits") );
-                flash = "Cannot contain the words: " + this.get("omits").replace(",", " or ");
-            }
+
             // minlength
             if ( this.get("minLength") ) {
                 minlength = this.isMinLength( value, this.get("minLength") );
-                flash = minlength ? null : "Must be at least " + this.get("minLength") + " characters"
+                flash = minlength ? flash : "Must be at least " + this.get("minLength") + " characters"
             }
+
+            // omits
+            if ( this.get("omits") ) {
+                omits = this.omits( value, this.get("omits") );
+                flash = omits ? flash : "Cannot contain the words: " + this.get("omits").replace(",", " or ");
+            }
+
             // maxlength
             if ( this.get("maxLength") ) minlength = this.isMaxLength( value, this.get("maxLength") );
 
@@ -126,16 +129,12 @@ function( app ) {
             $.get( app.metadata.api + "users/validate/" + value, function( data ) {
                 
                 ctx.valid = data.valid;
-                if ( data.valid ) {
-
-                } else {
-
-                }
-
-                ctx.trigger("validated", {
+                
+                ctx.set({
                     valid: data.valid,
-                    flash: ""
-                });
+                    _flash: data.valid ? "Ok!" : "That username is already in use :("
+                })
+                ctx.trigger("validated");
 
             }.bind(ctx))
             .fail(function( e ) {
