@@ -16974,7 +16974,8 @@ function( app ) {
             required: true,
 
             $el: null,
-            valid: null
+            valid: null,
+            _flash: null,
         },
 
         initialize: function() {
@@ -17000,6 +17001,8 @@ function( app ) {
                 default:
                     this.validate = this.plaintext;
             }
+
+            this.on("change:valid", this.onValidChange, this );
         },
 
         email: function( value ) {
@@ -17008,13 +17011,14 @@ function( app ) {
                     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 );
 
-            this.set("valid", isEmail );
+            this.set({
+                valid: isEmail,
+                _flash: isEmail ? null : "Invalid Email Address"
+
+            });
             this.updateEl( isEmail );
 
-            this.trigger("validated", {
-                valid: isEmail,
-                flash: isEmail ? "Valid Email Address" : "Invalid Email Address"
-            });
+            this.trigger("validated");
 
             return isEmail;
         },
@@ -17033,9 +17037,15 @@ function( app ) {
                 
             }
             // omits
-            if ( this.get("omits") ) omits = this.omits( value, this.get("omits") );
+            if ( this.get("omits") ) {
+                omits = this.omits( value, this.get("omits") );
+                flash = "Cannot contain the words: " + this.get("omits").replace(",", " or ");
+            }
             // minlength
-            if ( this.get("minLength") ) minlength = this.isMinLength( value, this.get("minLength") );
+            if ( this.get("minLength") ) {
+                minlength = this.isMinLength( value, this.get("minLength") );
+                flash = minlength ? null : "Must be at least " + this.get("minLength") + " characters"
+            }
             // maxlength
             if ( this.get("maxLength") ) minlength = this.isMaxLength( value, this.get("maxLength") );
 
@@ -17043,17 +17053,16 @@ function( app ) {
             if ( !this.get("required") && value.length === 0 ) {
                 this.set("valid", true );
             } else {
-                this.set("valid", omits && minlength && maxlength );
+                this.set({
+                    valid: omits && minlength && maxlength,
+                    _flash: flash
+                });
             }
 
-            
             this.updateEl( this.get("valid") );
 
             if ( this.get("type") !== "username" ) {
-                this.trigger("validated", {
-                    valid: this.get("valid"),
-                    flash: ""
-                });
+                this.trigger("validated");
             }
 
             return this.get("valid");
@@ -17134,6 +17143,25 @@ function( app ) {
 
         isMaxLength: function( value, max ) {
             return value.length <= max;
+        },
+
+        onValidChange: function() {
+            if ( this.get("valid") ) this.onValid();
+            else this.onInvalid();
+        },
+
+        onValid: function() {
+            $(".flash-" + this.cid ).remove();
+            if ( this.get("_flash") ) {
+                this.get("$el").after("<div class='flash flash-" + this.cid + " form-valid-message'>" + this.get("_flash") + "</div>");
+            }
+        },
+
+        onInvalid: function() {
+            $(".flash-" + this.cid ).remove();
+            if ( this.get("_flash") ) {
+                this.get("$el").after("<div class='flash flash-" + this.cid + " form-error-message'>" + this.get("_flash") + "</div>");
+            }
         },
 
         isValid: function() {
@@ -17281,6 +17309,16 @@ function( app, Validator ) {
 
         events: {
             "click .settings-submit": "settingsSubmit",
+            "keydown #username": "onUsernameKeydown"
+        },
+
+        onUsernameKeydown: function( e ) {
+            var charCode = e.which,
+                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
+                isNumber = charCode >= 48 && charCode <= 57,
+                isOkay = isLetter || isNumber;
+
+            return isOkay;
         },
 
         settingsSubmit: function() {
