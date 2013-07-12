@@ -99,6 +99,7 @@ function( app ) {
 
 
             if ( !this.get("required") && value.length === 0 ) {
+                console.log("is not required! no futher validation")
                 this.set({
                     valid: true,
                     _flash: null
@@ -147,6 +148,7 @@ function( app ) {
                 ctx.set({
                     valid: false
                 })
+
                 ctx.trigger("validated");
             }
         }, 750 ),

@@ -22,6 +22,7 @@ function( FacetCollection ) {
         },
 
         onValidated: function( validation ) {
+
             this.trigger("validated", {
                 valid: this.facets.isValid(),
                 flash: ""

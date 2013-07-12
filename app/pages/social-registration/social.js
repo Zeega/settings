@@ -7,9 +7,6 @@ define([
 
 function( app, User, Validator ) {
 
-    // TODO
-    // validate email address
-
     return Backbone.View.extend({
 
         el: $("body"),
