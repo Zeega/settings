@@ -70,16 +70,22 @@ function( app, Validator ) {
 
         events: {
             "click .settings-submit": "settingsSubmit",
-            "keydown #username": "onUsernameKeydown"
+            "keydown #username": "onUsernameKeydown",
+            "keyup #username": "onUsernameKeyup"
         },
 
         onUsernameKeydown: function( e ) {
             var charCode = e.which,
                 isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
                 isNumber = charCode >= 48 && charCode <= 57,
-                isOkay = isLetter || isNumber;
+                isArrow = charCode >= 37 && charCode <= 40,
+                isOkay = isLetter || isNumber || isArrow;
 
             return isOkay;
+        },
+
+        onUsernameKeyup: function() {
+            $(".username-preview").text( $("#username").val() );
         },
 
         settingsSubmit: function() {

@@ -65,7 +65,8 @@ function( app, User, Validator ) {
         },
 
         onUsernameKeyup: function( e ) {
-
+            console.log("asdf",$("#zeega_user_registration_social_username").val())
+            $(".username-preview").text( $("#zeega_user_registration_social_username").val() );
         },
 
         saveUserModel: function() {
