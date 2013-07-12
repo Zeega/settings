@@ -85,7 +85,7 @@ function( app ) {
             // minlength
             if ( this.get("minLength") ) {
                 minlength = this.isMinLength( value, this.get("minLength") );
-                flash = minlength ? flash : "Must be at least " + this.get("minLength") + " characters";
+                flash = minlength ? null : "Must be at least " + this.get("minLength") + " characters";
             }
 
             // omits
@@ -99,7 +99,10 @@ function( app ) {
 
 
             if ( !this.get("required") && value.length === 0 ) {
-                this.set("valid", true );
+                this.set({
+                    valid: true,
+                    _flash: null
+                });
             } else {
                 this.set({
                     valid: omits && minlength && maxlength,
