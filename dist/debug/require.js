@@ -17002,8 +17002,10 @@ function( app ) {
                     this.validate = this.plaintext;
             }
 
-            if ( this.get("type") == "username") this.valid = true
-            else this.validate();
+            if ( this.get("$el").val().length ) this.set("valid", true);
+
+            // if ( this.get("type") == "username") this.valid = true
+            // else this.validate();
 
             this.on("change:valid", this.onValidChange, this );
         },
