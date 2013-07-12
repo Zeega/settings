@@ -397,13 +397,13 @@ return __p;
 this["JST"]["app/pages/settings/settings.html"] = function(obj){
 var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};
 with(obj||{}){
-__p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        <fieldset>\n            <label>Display Name</label>\n            <input id="display-name" type="text" placeholder="Display Name" value="'+
-( display_name )+
-'">\n            <span class="help-block">The name that will appear next to your Zeegas.</span>\n\n            <label>Username <span class="username-validation"></span></label>\n            <input id="username" type="text" placeholder="Username" value="'+
+__p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        <fieldset>\n\n            <label>Username <span class="username-validation"></span></label>\n            <input id="username" type="text" placeholder="Username" value="'+
 ( username )+
 '">\n            <span class="help-block">http://zeega.com/@<span class="username-preview">'+
 ( username )+
-'</span> — Letters and numbers only!</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
+'</span></span>\n\n            <label>Display Name</label>\n            <input id="display-name" type="text" placeholder="Display Name" value="'+
+( display_name )+
+'">\n            <span class="help-block">The name that will appear next to your Zeegas.</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
 '">\n            </div>\n\n            <div class="half-width">\n                <label>Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
@@ -16953,12 +16953,269 @@ define('app',[
 
 });
 
-define('pages/settings/settings',[
+define('validator/facet',[
     "app",
     "backbone"
 ],
 
 function( app ) {
+
+    return Backbone.Model.extend({
+        
+        validate: null,
+
+        defaults: {
+            type: "plaintext", // email, password
+            contains: null, // csv
+            omits: null, // csv
+            minLength: 0,
+            maxLength: null,
+            vigilant: true,
+            required: true,
+
+            $el: null,
+            valid: null
+        },
+
+        initialize: function() {
+
+            this.valid = false;
+
+            if ( this.get("vigilant") ) {
+                this.get("$el").bind("keyup.facet-" + this.cid, function(e) {
+                    this.onKeyup( e );
+                }.bind( this ));
+                this.get("$el").bind("keydown.facet-" + this.cid, function(e) {
+                    this.onKeydown( e );
+                }.bind( this ));
+            }
+
+            switch( this.get("type") ) {
+                case "email":
+                    this.validate = this.email;
+                    break;
+                case "username":
+                    this.validate = this.username;
+                    break;
+                default:
+                    this.validate = this.plaintext;
+            }
+        },
+
+        email: function( value ) {
+            var isEmail = this.conformsTo(
+                    this.get("$el").val(),
+                    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                );
+
+            this.set("valid", isEmail );
+            this.updateEl( isEmail );
+
+            this.trigger("validated", {
+                valid: isEmail,
+                flash: isEmail ? "Valid Email Address" : "Invalid Email Address"
+            });
+
+            return isEmail;
+        },
+
+        plaintext: function( value ) {
+            var contains = true,
+                omits = true,
+                minlength = true,
+                maxlength = true,
+                value = this.get("$el").val(),
+                flash,
+                validation;
+
+            // contains
+            if ( this.get("contains") ) {
+                
+            }
+            // omits
+            if ( this.get("omits") ) omits = this.omits( value, this.get("omits") );
+            // minlength
+            if ( this.get("minLength") ) minlength = this.isMinLength( value, this.get("minLength") );
+            // maxlength
+            if ( this.get("maxLength") ) minlength = this.isMaxLength( value, this.get("maxLength") );
+
+
+            if ( !this.get("required") && value.length === 0 ) {
+                this.set("valid", true );
+            } else {
+                this.set("valid", omits && minlength && maxlength );
+            }
+
+            
+            this.updateEl( this.get("valid") );
+
+            if ( this.get("type") !== "username" ) {
+                this.trigger("validated", {
+                    valid: this.get("valid"),
+                    flash: ""
+                });
+            }
+
+            return this.get("valid");
+        },
+
+        username: function( value ) {
+            var usernameValid, validString = this.plaintext();
+            
+            if ( validString ) {
+                this.checkUsername( this.get("$el").val(), this );
+            } else return false;
+        },
+
+        checkUsername: _.debounce(function( value, ctx ) {
+
+            $.get( app.metadata.api + "users/validate/" + value, function( data ) {
+                
+                ctx.valid = data.valid;
+                if ( data.valid ) {
+
+                } else {
+
+                }
+
+                ctx.trigger("validated", {
+                    valid: data.valid,
+                    flash: ""
+                });
+
+            }.bind(ctx))
+            .fail(function( e ) {
+
+            }.bind(ctx))
+            .always(function() {
+
+            }.bind(ctx));
+        }, 750 ),
+
+
+        updateEl: function( isValid ) {
+            if ( isValid ) {
+                this.get("$el").removeClass("input-error");
+            } else {
+                this.get("$el").addClass("input-error");
+            }
+        },
+
+        onKeyup: function( e ) {
+            this.validate( e );
+        },
+
+        onKeydown: function( e ) {
+            this.valid = false;
+        },
+
+        conformsTo: function( value, regexp ) {
+
+            return regexp.test( value );
+        },
+
+        contains: function() {
+
+        },
+
+        omits: function( value, omitString ) {
+            var truthArray = _.map( omitArray = omitString.split(","), function( badWord ) {
+                var regexp = new RegExp( badWord, "gi" );
+
+                return value.match(regexp) === null;
+            });
+
+            return !_.contains( truthArray, false );
+        },
+
+        isMinLength: function( value, min ) {
+            return value.length >= min;
+        },
+
+        isMaxLength: function( value, max ) {
+            return value.length <= max;
+        },
+
+        isValid: function() {
+            return this.valid;
+        }
+
+    });
+
+});
+
+define('validator/facet.collection',[
+    "validator/facet",
+    "backbone"
+],
+
+function( Facet ) {
+
+    return Backbone.Collection.extend({
+        
+        model: Facet,
+
+        onSet: function() {
+            console.log("onse se")
+        },
+
+        isValid: function() {
+            return !_.contains( this.pluck("valid"), false )
+        },
+
+        getValid: function() {
+
+        },
+
+        getInvalid: function() {
+
+        }
+
+    });
+
+});
+
+define('validator/validator',[
+    "validator/facet.collection",
+    "backbone"
+],
+
+function( FacetCollection ) {
+
+    return Backbone.Model.extend({
+        
+        facets: null,
+
+        initialize: function() {
+            this.facets = new FacetCollection( this.get("facets") );
+
+            if ( this.facets.length ) {
+                this.listen();
+            }
+        },
+
+        listen: function() {
+            this.facets.on("validated", this.onValidated, this);
+        },
+
+        onValidated: function( validation ) {
+            this.trigger("validated", {
+                valid: this.facets.isValid(),
+                flash: ""
+            });
+        }
+
+    });
+
+});
+
+define('pages/settings/settings',[
+    "app",
+    "validator/validator",
+    "backbone"
+],
+
+function( app, Validator ) {
 
     // TODO
     // validate email address
@@ -16969,7 +17226,7 @@ function( app ) {
         className: "settings",
         valid: true,
         isValidating: false,
-        
+
         serialize: function() {
 
             return  _.extend({},
@@ -16981,72 +17238,49 @@ function( app ) {
             );
         },
 
+        afterRender: function() {
+            this.initValidation();
+        },
+
+        initValidation: function() {
+            this.validator = new Validator({
+                facets:[
+                    {
+                        type: "email",
+                        $el: this.$("#email")
+                    }, {
+                        type: "username",
+                        $el: this.$("#username"),
+                        omits: "zeega,admin",
+                        minLength: 3
+                    }, {
+                        type: "plaintext",
+                        $el: this.$("#display-name"),
+                        omits: "zeega,admin",
+                        minLength: 3
+                    }, {
+                        type: "plaintext",
+                        $el: this.$("#password"),
+                        minLength: 6,
+                        required: false
+                    }
+                ]
+            });
+
+            this.validator.on("validated", this.onValidation, this );
+        },
+
+        onValidation: function( response ) {
+
+            if ( response.valid ) {
+                this.$(".settings-submit").removeClass("btnz-disabled").addClass("btnz-green");
+            } else {
+                this.$(".settings-submit").addClass("btnz-disabled").removeClass("btnz-green");
+            }
+        },
+
         events: {
             "click .settings-submit": "settingsSubmit",
-            "blur #username": "validateUsername",
-            "keydown #username": "onUsernameKeydown",
-            "paste #username": "onPaste",
-            "keydown input": "onAnyInput"
-        },
-
-        onAnyInput: function() {
-            $(".settings-submit")
-                .text("Save Updates")
-                .addClass("btnz-red")
-                .removeClass("btnz-disabled btnz-success btnz-flat");
-        },
-
-        onPaste: function() {
-            $(".username-validation").empty();
-            _.delay(function() {
-                var pastedContent = $("#username").val(),
-                    cleansedContent = pastedContent.replace(/[^a-z0-9]/gi,"");
-
-                $("#username").val( cleansedContent );
-            }, 250 );
-        },
-
-        onUsernameKeydown: function( e ) {
-            var charCode = e.which,
-                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57,
-                isOkay = isLetter || isNumber;
-
-            this.valid = false;
-            $(".username-validation").empty();
-            
-            if ( isOkay ) {
-                $(".username-preview").text( $("#username").val());
-            }
-
-            return isOkay;
-        },
-
-        validateUsername: function() {
-            this.isValidating = true;
-
-            // broken in prod because of XDomain issues - 401
-            $.get( app.metadata.api + "users/validate/" + this.$("#username").val(), function(data) {
-                this.valid = data.valid;
-                if ( data.valid ) {
-                    this.model.trigger("validated");
-                    this.$(".username-validation").html("— <span class='valid'>ok!</span>");
-                    $("#username").removeClass("error");
-                } else {
-                    this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
-                    $("#username").addClass("error");
-                }
-            }.bind(this))
-            .fail(function( e ) {
-                console.log("validation fail. Details:", e);
-                this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
-                $("#username").addClass("error");
-                // this.valid = true; // rm this. invalid. for testing
-            }.bind(this))
-            .always(function() {
-                this.isValidating = false;
-            }.bind(this));
-            
         },
 
         settingsSubmit: function() {
@@ -17138,17 +17372,55 @@ function( app, User ) {
             $(".username-preview").text( $("#zeega_user_registration_social_username").val());
         },
 
+        isEmailValid: function() {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            
+            return re.test( this.$("#form_email").val() );
+        },
+
+        isUsernameValid: function() {
+            var reason,
+                val = this.$("#zeega_user_registration_social_username").val(),
+                minLength = val.length > 2,
+                omitsZeega = this.omits( val, "zeega"),
+                omitsAdmin = this.omits( val, "admin");
+                
+            return {
+                valid: minLength && omitsZeega && omitsAdmin && this.valid,
+                reason: !minLength ? "Username must be at least 3 characters" :
+                        !omitsZeega ? "Cannot contain the word 'zeega'" :
+                        !omitsAdmin ? "Cannot contain the word 'admin'" : "valid"
+            };
+        },
+
+        omits: function( string, check ) {
+            var regexp = new RegExp( check, "gi" ),
+                tester = string.match(regexp);
+
+            return tester === null;
+        },
+
+        isFormValid: function() {
+
+            if ( this.isUsernameValid().valid && this.isEmailValid() ) {
+                this.$(".submit").removeClass("btnz-disabled");
+            } else {
+                this.$(".submit").addClass("btnz-disabled");
+            }
+        },
+
         events: {
             "click .submit": "settingsSubmit",
-            "blur #zeega_user_registration_social_username": "validateUsername",
             "keyup #zeega_user_registration_social_username": "onUsernameKeydown",
             "paste #zeega_user_registration_social_username": "onPaste",
-            "keydown input": "onAnyInput"
+            "keyup input": "onAnyInput"
         },
 
         onAnyInput: function() {
             $(".submit")
                 .text("Save Updates").removeClass("btnz-flat");
+
+            this.isFormValid();
         },
 
         onPaste: function() {
@@ -17167,7 +17439,6 @@ function( app, User ) {
                 isNumber = charCode >= 48 && charCode <= 57,
                 isOkay = isLetter || isNumber;
 
-            this.disableSubmit();
             this.valid = false;
             $(".username-validation").empty();
             
@@ -17176,6 +17447,7 @@ function( app, User ) {
             }
 
             this.lazyValidate( this );
+            this.disableSubmit();
 
             return isOkay;
         },
@@ -17187,28 +17459,33 @@ function( app, User ) {
         validateUsername: function() {
             this.isValidating = true;
 
-            // broken in prod because of XDomain issues - 401
-            $.get( app.metadata.api + "users/validate/" + this.$("#zeega_user_registration_social_username").val(), function(data) {
-                this.valid = data.valid;
-                if ( data.valid ) {
-                    this.enableSubmit();
-                    this.model.trigger("validated");
-                    this.$(".username-validation").html("— <span class='valid'>ok!</span>");
-                    $("#zeega_user_registration_social_username").removeClass("error");
-                } else {
-                    this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
-                    $("#zeega_user_registration_social_username").addClass("error");
-                }
-            }.bind(this))
-            .fail(function( e ) {
-                console.log("validation fail. Details:", e);
-                this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
+            if ( this.$("#zeega_user_registration_social_username").val().length < 3 ) {
+                this.$(".username-validation").html("— <span class='invalid'>Your username must be at least 3 characters</span>");
                 $("#zeega_user_registration_social_username").addClass("error");
-            }.bind(this))
-            .always(function() {
-                this.isValidating = false;
-            }.bind(this));
-            
+            } else {
+
+                // broken in prod because of XDomain issues - 401
+                $.get( app.metadata.api + "users/validate/" + this.$("#zeega_user_registration_social_username").val(), function(data) {
+                    this.valid = data.valid;
+                    if ( data.valid ) {
+                        this.enableSubmit();
+                        this.model.trigger("validated");
+                        this.$(".username-validation").html("— <span class='valid'>ok!</span>");
+                        $("#zeega_user_registration_social_username").removeClass("error");
+                    } else {
+                        this.$(".username-validation").html("— <span class='invalid'>That username has already been taken :(</span>");
+                        $("#zeega_user_registration_social_username").addClass("error");
+                    }
+                }.bind(this))
+                .fail(function( e ) {
+                    console.log("validation fail. Details:", e);
+                    this.$(".username-validation").html("— <span class='invalid'>Validation failed. Try again?</span>");
+                    $("#zeega_user_registration_social_username").addClass("error");
+                }.bind(this))
+                .always(function() {
+                    this.isValidating = false;
+                }.bind(this));
+            }
         },
 
         enableSubmit: function() {
@@ -17278,6 +17555,7 @@ function( app, User ) {
             
             return re.test( this.$("#fos_user_registration_form_email").val() );
         },
+
         isDisplayNameValid: function() {
             var reason,
                 val = this.$("#fos_user_registration_form_displayName").val(),
@@ -17292,15 +17570,16 @@ function( app, User ) {
                         !omitsAdmin ? "Cannot contain the word 'admin'" : "valid"
             };
         },
-        isPasswordValid: function() {
-            return this.$("#fos_user_registration_form_plainPassword").val().length > 5;
-        },
 
         omits: function( string, check ) {
             var regexp = new RegExp( check, "gi" ),
                 tester = string.match(regexp);
 
             return tester === null;
+        },
+
+        isPasswordValid: function() {
+            return this.$("#fos_user_registration_form_plainPassword").val().length > 5;
         },
 
         events: {
@@ -17449,7 +17728,6 @@ function( app, User ) {
                 password: this.$("#password").val()
             });
             $(".submit")
-                .text("Updates Saved!")
                 .addClass("btnz-success btnz-flat")
                 .removeClass("btnz-disabled");
         }

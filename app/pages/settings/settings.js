@@ -70,6 +70,16 @@ function( app, Validator ) {
 
         events: {
             "click .settings-submit": "settingsSubmit",
+            "keydown #username": "onUsernameKeydown"
+        },
+
+        onUsernameKeydown: function( e ) {
+            var charCode = e.which,
+                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
+                isNumber = charCode >= 48 && charCode <= 57,
+                isOkay = isLetter || isNumber;
+
+            return isOkay;
         },
 
         settingsSubmit: function() {
