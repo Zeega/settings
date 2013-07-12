@@ -10,9 +10,7 @@ function( app, User, Validator ) {
     return Backbone.View.extend({
 
         el: $("body"),
-
-        validator: null,
-        
+       
         initialize: function() {
             this.model = new User();
             this.$("label[for*='zeega_user_registration_social_username']").append(" <span class='username-validation'></span>");
@@ -31,7 +29,8 @@ function( app, User, Validator ) {
                         type: "username",
                         $el: this.$("#zeega_user_registration_social_username"),
                         omits: "zeega,admin",
-                        minLength: 3
+                        minLength: 3,
+                        alphanumeric: true
                     }
                 ]
             });
@@ -50,22 +49,10 @@ function( app, User, Validator ) {
 
         events: {
             "click .submit": "saveUserModel",
-            "keydown #zeega_user_registration_social_username": "onUsernameKeydown",
             "keyup #zeega_user_registration_social_username": "onUsernameKeyup"
         },
 
-        onUsernameKeydown: function( e ) {
-            var charCode = e.which,
-                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57,
-                isArrow = charCode >= 37 && charCode <= 40,
-                isOkay = isLetter || isNumber || isArrow;
-
-            return isOkay;
-        },
-
         onUsernameKeyup: function( e ) {
-            console.log("asdf",$("#zeega_user_registration_social_username").val())
             $(".username-preview").text( $("#zeega_user_registration_social_username").val() );
         },
 

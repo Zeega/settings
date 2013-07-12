@@ -10,9 +10,6 @@ function( app, User, Validator ) {
     return Backbone.View.extend({
 
         el: $("body"),
-
-        valid: true,
-        isValidating: false,
         
         initialize: function() {
             this.model = new User();
@@ -29,7 +26,8 @@ function( app, User, Validator ) {
                         type: "username",
                         $el: this.$("#fos_user_registration_form_username"),
                         omits: "zeega,admin",
-                        minLength: 3
+                        minLength: 3,
+                        alphanumeric: true
                     }, {
                         type: "plaintext",
                         $el: this.$("#fos_user_registration_form_displayName"),
@@ -55,36 +53,14 @@ function( app, User, Validator ) {
             }
         },
 
-
         events: {
-            "click .submit": "settingsSubmit",
-            "keyup #fos_user_registration_form_username": "onUsernameKeyup",
-            "keydown #fos_user_registration_form_username": "onUsernameKeydown",
-        },
-
-        onUsernameKeydown: function( e ) {
-            var charCode = e.which,
-                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57,
-                isArrow = charCode >= 37 && charCode <= 40,
-                isOkay = isLetter || isNumber || isArrow;
-
-            return isOkay;
+            "click .submit": "saveUserModel",
+            "keyup #fos_user_registration_form_username": "onUsernameKeyup"
         },
 
         onUsernameKeyup: function( e ) {
             if ( $(".help-block").is(":hidden") ) $(".help-block").fadeIn();
             $(".username-preview").text( $("#fos_user_registration_form_username").val());
-        },
-
-        settingsSubmit: function() {
-
-            $(".submit").removeClass("btnz-red").addClass("btnz-disabled");
-            if ( this.isValidating ) {
-                this.model.once("validated", this.saveUserModel, this);
-            } else if ( this.valid ) {
-               this.saveUserModel();
-            }
         },
 
         saveUserModel: function() {
@@ -94,9 +70,7 @@ function( app, User, Validator ) {
                 email: this.$("#email").val(),
                 password: this.$("#password").val()
             });
-            $(".submit")
-                .addClass("btnz-success btnz-flat")
-                .removeClass("btnz-disabled");
+            $(".submit").addClass("btnz-disabled");
         }
 
     });

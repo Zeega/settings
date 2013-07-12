@@ -6,15 +6,10 @@ define([
 
 function( app, Validator ) {
 
-    // TODO
-    // validate email address
-
     return Backbone.View.extend({
 
         template: "pages/settings/settings",
         className: "settings",
-        valid: true,
-        isValidating: false,
 
         serialize: function() {
 
@@ -41,7 +36,8 @@ function( app, Validator ) {
                         type: "username",
                         $el: this.$("#username"),
                         omits: "zeega,admin",
-                        minLength: 3
+                        minLength: 3,
+                        alphanumeric: true
                     }, {
                         type: "plaintext",
                         $el: this.$("#display-name"),
@@ -69,33 +65,12 @@ function( app, Validator ) {
         },
 
         events: {
-            "click .settings-submit": "settingsSubmit",
-            "keydown #username": "onUsernameKeydown",
+            "click .settings-submit": "saveUserModel",
             "keyup #username": "onUsernameKeyup"
-        },
-
-        onUsernameKeydown: function( e ) {
-            var charCode = e.which,
-                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57,
-                isArrow = charCode >= 37 && charCode <= 40,
-                isOkay = isLetter || isNumber || isArrow;
-
-            return isOkay;
         },
 
         onUsernameKeyup: function() {
             $(".username-preview").text( $("#username").val() );
-        },
-
-        settingsSubmit: function() {
-
-            $(".settings-submit").removeClass("btnz-red").addClass("btnz-disabled");
-            if ( this.isValidating ) {
-                this.model.once("validated", this.saveUserModel, this);
-            } else if ( this.valid ) {
-               this.saveUserModel();
-            }
         },
 
         saveUserModel: function() {
@@ -105,10 +80,8 @@ function( app, Validator ) {
                 email: this.$("#email").val(),
                 password: this.$("#password").val()
             });
-            $(".settings-submit")
-                .text("Updates Saved!")
-                .addClass("btnz-success btnz-flat")
-                .removeClass("btnz-disabled");
+
+            $(".settings-submit").removeClass("btnz-disabled");
         }
 
     });

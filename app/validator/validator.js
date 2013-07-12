@@ -17,18 +17,51 @@ function( FacetCollection ) {
             }
         },
 
+        add: function( facets ) {
+            this.facets.add( facets );
+        },
+
         listen: function() {
-            this.facets.on("validated", this.onValidated, this);
+            this.facets.on("change:valid", this.onValidated, this);
+        },
+
+        unlisten: function() {
+            this.facets.off("validated");
+        },
+
+        start: function() {
+            this.unlisten();
+            this.listen();
+        },
+
+        pause: function() {
+            this.listen();
         },
 
         onValidated: function( validation ) {
+            var invalid = this.getInvalid();
 
             this.trigger("validated", {
                 valid: this.facets.isValid(),
-                flash: ""
+                flash: invalid.length ? "There are " + invalid.length + " unresolved issues" : "valid"
+            });
+        },
+
+        isValid: function() {
+            return this.facets.isValid();
+        },
+
+        getValid: function() {
+            return this.facets.filter(function( facet ) {
+                return facet.get("valid");
+            });
+        },
+
+        getInvalid: function() {
+            return this.facets.filter(function( facet ) {
+                return !facet.get("valid");
             });
         }
 
     });
-
 });

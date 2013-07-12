@@ -16972,15 +16972,16 @@ function( app ) {
             maxLength: null,
             vigilant: true,
             required: true,
+            alphanumeric: false,
 
             $el: null,
             valid: null,
-            _flash: null
+            _flash: null,
+            _value: null
         },
 
         initialize: function() {
-
-            this.valid = false;
+            this.set("_value", this.get("$el").val(), { silent: true });
 
             if ( this.get("vigilant") ) {
                 this.get("$el").bind("keyup.facet-" + this.cid, function(e) {
@@ -16988,6 +16989,7 @@ function( app ) {
                 }.bind( this ));
                 this.get("$el").bind("keydown.facet-" + this.cid, function(e) {
                     this.onKeydown( e );
+                    return this.isAlphaNumeric( e.which );
                 }.bind( this ));
             }
 
@@ -17004,13 +17006,10 @@ function( app ) {
 
             if ( this.get("$el").val().length ) this.set("valid", true);
 
-            // if ( this.get("type") == "username") this.valid = true
-            // else this.validate();
-
             this.on("change:valid", this.onValidChange, this );
         },
 
-        email: function( value ) {
+        email: function( e ) {
             var isEmail = this.conformsTo(
                     this.get("$el").val(),
                     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -17023,12 +17022,10 @@ function( app ) {
             });
             this.updateEl( isEmail );
 
-            this.trigger("validated");
-
             return isEmail;
         },
 
-        plaintext: function( value ) {
+        plaintext: function( e ) {
             var contains = true,
                 omits = true,
                 minlength = true,
@@ -17059,7 +17056,6 @@ function( app ) {
 
 
             if ( !this.get("required") && value.length === 0 ) {
-                console.log("is not required! no futher validation")
                 this.set({
                     valid: true,
                     _flash: null
@@ -17073,15 +17069,24 @@ function( app ) {
 
             this.updateEl( this.get("valid") );
 
-            if ( this.get("type") !== "username" ) {
-                this.trigger("validated");
-            }
-
             return this.get("valid");
         },
 
-        username: function( value ) {
-            this.checkUsername( this.get("$el").val(), this );
+        username: function( e ) {
+            var val = $(e.target).val();
+
+            // prevent authenticating on if the value hasn't actually been changed
+            if ( val != this.get("_value") ) {
+                this.set("_value", val );
+
+                this.set({
+                    valid: false,
+                    _flash: ""
+                });
+
+                this.checkUsername( val, this );
+            }
+
         },
 
         checkUsername: _.debounce(function( value, ctx ) {
@@ -17094,7 +17099,7 @@ function( app ) {
                     ctx.set({
                         valid: data.valid,
                         _flash: data.valid ? null : "That username is already in use :("
-                    })
+                    });
                     ctx.trigger("validated");
 
                 }.bind(ctx))
@@ -17107,7 +17112,7 @@ function( app ) {
             } else {
                 ctx.set({
                     valid: false
-                })
+                });
 
                 ctx.trigger("validated");
             }
@@ -17124,14 +17129,26 @@ function( app ) {
 
         onKeyup: function( e ) {
             this.validate( e );
+            this.set("_value", $(e.target).val() );
         },
 
         onKeydown: function( e ) {
-            this.valid = false;
+            
+        },
+
+        isAlphaNumeric: function( charCode ) {
+            if ( this.get("alphanumeric") ) {
+                var isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
+                    isNumber = charCode >= 48 && charCode <= 57,
+                    isArrow = charCode >= 37 && charCode <= 40,
+                    isOkay = isLetter || isNumber || isArrow;
+
+                return isOkay;
+            }
+            return true;
         },
 
         conformsTo: function( value, regexp ) {
-
             return regexp.test( value );
         },
 
@@ -17177,7 +17194,7 @@ function( app ) {
         },
 
         isValid: function() {
-            return this.valid;
+            return this.get("valid");
         }
 
     });
@@ -17196,16 +17213,7 @@ function( Facet ) {
         model: Facet,
 
         isValid: function() {
-            // console.log("is valid:", this.pluck("valid"), _.every( this.pluck("valid"), Boolean ));
             return _.every( this.pluck("valid"), Boolean );
-        },
-
-        getValid: function() {
-
-        },
-
-        getInvalid: function() {
-
         }
 
     });
@@ -17231,20 +17239,53 @@ function( FacetCollection ) {
             }
         },
 
+        add: function( facets ) {
+            this.facets.add( facets );
+        },
+
         listen: function() {
-            this.facets.on("validated", this.onValidated, this);
+            this.facets.on("change:valid", this.onValidated, this);
+        },
+
+        unlisten: function() {
+            this.facets.off("validated");
+        },
+
+        start: function() {
+            this.unlisten();
+            this.listen();
+        },
+
+        pause: function() {
+            this.listen();
         },
 
         onValidated: function( validation ) {
+            var invalid = this.getInvalid();
 
             this.trigger("validated", {
                 valid: this.facets.isValid(),
-                flash: ""
+                flash: invalid.length ? "There are " + invalid.length + " unresolved issues" : "valid"
+            });
+        },
+
+        isValid: function() {
+            return this.facets.isValid();
+        },
+
+        getValid: function() {
+            return this.facets.filter(function( facet ) {
+                return facet.get("valid");
+            });
+        },
+
+        getInvalid: function() {
+            return this.facets.filter(function( facet ) {
+                return !facet.get("valid");
             });
         }
 
     });
-
 });
 
 define('pages/settings/settings',[
@@ -17255,15 +17296,10 @@ define('pages/settings/settings',[
 
 function( app, Validator ) {
 
-    // TODO
-    // validate email address
-
     return Backbone.View.extend({
 
         template: "pages/settings/settings",
         className: "settings",
-        valid: true,
-        isValidating: false,
 
         serialize: function() {
 
@@ -17290,7 +17326,8 @@ function( app, Validator ) {
                         type: "username",
                         $el: this.$("#username"),
                         omits: "zeega,admin",
-                        minLength: 3
+                        minLength: 3,
+                        alphanumeric: true
                     }, {
                         type: "plaintext",
                         $el: this.$("#display-name"),
@@ -17318,33 +17355,12 @@ function( app, Validator ) {
         },
 
         events: {
-            "click .settings-submit": "settingsSubmit",
-            "keydown #username": "onUsernameKeydown",
+            "click .settings-submit": "saveUserModel",
             "keyup #username": "onUsernameKeyup"
-        },
-
-        onUsernameKeydown: function( e ) {
-            var charCode = e.which,
-                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57,
-                isArrow = charCode >= 37 && charCode <= 40,
-                isOkay = isLetter || isNumber || isArrow;
-
-            return isOkay;
         },
 
         onUsernameKeyup: function() {
             $(".username-preview").text( $("#username").val() );
-        },
-
-        settingsSubmit: function() {
-
-            $(".settings-submit").removeClass("btnz-red").addClass("btnz-disabled");
-            if ( this.isValidating ) {
-                this.model.once("validated", this.saveUserModel, this);
-            } else if ( this.valid ) {
-               this.saveUserModel();
-            }
         },
 
         saveUserModel: function() {
@@ -17354,10 +17370,8 @@ function( app, Validator ) {
                 email: this.$("#email").val(),
                 password: this.$("#password").val()
             });
-            $(".settings-submit")
-                .text("Updates Saved!")
-                .addClass("btnz-success btnz-flat")
-                .removeClass("btnz-disabled");
+
+            $(".settings-submit").removeClass("btnz-disabled");
         }
 
     });
@@ -17416,9 +17430,7 @@ function( app, User, Validator ) {
     return Backbone.View.extend({
 
         el: $("body"),
-
-        validator: null,
-        
+       
         initialize: function() {
             this.model = new User();
             this.$("label[for*='zeega_user_registration_social_username']").append(" <span class='username-validation'></span>");
@@ -17437,7 +17449,8 @@ function( app, User, Validator ) {
                         type: "username",
                         $el: this.$("#zeega_user_registration_social_username"),
                         omits: "zeega,admin",
-                        minLength: 3
+                        minLength: 3,
+                        alphanumeric: true
                     }
                 ]
             });
@@ -17456,22 +17469,10 @@ function( app, User, Validator ) {
 
         events: {
             "click .submit": "saveUserModel",
-            "keydown #zeega_user_registration_social_username": "onUsernameKeydown",
             "keyup #zeega_user_registration_social_username": "onUsernameKeyup"
         },
 
-        onUsernameKeydown: function( e ) {
-            var charCode = e.which,
-                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57,
-                isArrow = charCode >= 37 && charCode <= 40,
-                isOkay = isLetter || isNumber || isArrow;
-
-            return isOkay;
-        },
-
         onUsernameKeyup: function( e ) {
-            console.log("asdf",$("#zeega_user_registration_social_username").val())
             $(".username-preview").text( $("#zeega_user_registration_social_username").val() );
         },
 
@@ -17505,9 +17506,6 @@ function( app, User, Validator ) {
     return Backbone.View.extend({
 
         el: $("body"),
-
-        valid: true,
-        isValidating: false,
         
         initialize: function() {
             this.model = new User();
@@ -17524,7 +17522,8 @@ function( app, User, Validator ) {
                         type: "username",
                         $el: this.$("#fos_user_registration_form_username"),
                         omits: "zeega,admin",
-                        minLength: 3
+                        minLength: 3,
+                        alphanumeric: true
                     }, {
                         type: "plaintext",
                         $el: this.$("#fos_user_registration_form_displayName"),
@@ -17550,36 +17549,14 @@ function( app, User, Validator ) {
             }
         },
 
-
         events: {
-            "click .submit": "settingsSubmit",
-            "keyup #fos_user_registration_form_username": "onUsernameKeyup",
-            "keydown #fos_user_registration_form_username": "onUsernameKeydown",
-        },
-
-        onUsernameKeydown: function( e ) {
-            var charCode = e.which,
-                isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
-                isNumber = charCode >= 48 && charCode <= 57,
-                isArrow = charCode >= 37 && charCode <= 40,
-                isOkay = isLetter || isNumber || isArrow;
-
-            return isOkay;
+            "click .submit": "saveUserModel",
+            "keyup #fos_user_registration_form_username": "onUsernameKeyup"
         },
 
         onUsernameKeyup: function( e ) {
             if ( $(".help-block").is(":hidden") ) $(".help-block").fadeIn();
             $(".username-preview").text( $("#fos_user_registration_form_username").val());
-        },
-
-        settingsSubmit: function() {
-
-            $(".submit").removeClass("btnz-red").addClass("btnz-disabled");
-            if ( this.isValidating ) {
-                this.model.once("validated", this.saveUserModel, this);
-            } else if ( this.valid ) {
-               this.saveUserModel();
-            }
         },
 
         saveUserModel: function() {
@@ -17589,9 +17566,7 @@ function( app, User, Validator ) {
                 email: this.$("#email").val(),
                 password: this.$("#password").val()
             });
-            $(".submit")
-                .addClass("btnz-success btnz-flat")
-                .removeClass("btnz-disabled");
+            $(".submit").addClass("btnz-disabled");
         }
 
     });

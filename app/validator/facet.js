@@ -17,15 +17,16 @@ function( app ) {
             maxLength: null,
             vigilant: true,
             required: true,
+            alphanumeric: false,
 
             $el: null,
             valid: null,
-            _flash: null
+            _flash: null,
+            _value: null
         },
 
         initialize: function() {
-
-            this.valid = false;
+            this.set("_value", this.get("$el").val(), { silent: true });
 
             if ( this.get("vigilant") ) {
                 this.get("$el").bind("keyup.facet-" + this.cid, function(e) {
@@ -33,6 +34,7 @@ function( app ) {
                 }.bind( this ));
                 this.get("$el").bind("keydown.facet-" + this.cid, function(e) {
                     this.onKeydown( e );
+                    return this.isAlphaNumeric( e.which );
                 }.bind( this ));
             }
 
@@ -49,13 +51,10 @@ function( app ) {
 
             if ( this.get("$el").val().length ) this.set("valid", true);
 
-            // if ( this.get("type") == "username") this.valid = true
-            // else this.validate();
-
             this.on("change:valid", this.onValidChange, this );
         },
 
-        email: function( value ) {
+        email: function( e ) {
             var isEmail = this.conformsTo(
                     this.get("$el").val(),
                     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -68,12 +67,10 @@ function( app ) {
             });
             this.updateEl( isEmail );
 
-            this.trigger("validated");
-
             return isEmail;
         },
 
-        plaintext: function( value ) {
+        plaintext: function( e ) {
             var contains = true,
                 omits = true,
                 minlength = true,
@@ -104,7 +101,6 @@ function( app ) {
 
 
             if ( !this.get("required") && value.length === 0 ) {
-                console.log("is not required! no futher validation")
                 this.set({
                     valid: true,
                     _flash: null
@@ -118,15 +114,24 @@ function( app ) {
 
             this.updateEl( this.get("valid") );
 
-            if ( this.get("type") !== "username" ) {
-                this.trigger("validated");
-            }
-
             return this.get("valid");
         },
 
-        username: function( value ) {
-            this.checkUsername( this.get("$el").val(), this );
+        username: function( e ) {
+            var val = $(e.target).val();
+
+            // prevent authenticating on if the value hasn't actually been changed
+            if ( val != this.get("_value") ) {
+                this.set("_value", val );
+
+                this.set({
+                    valid: false,
+                    _flash: ""
+                });
+
+                this.checkUsername( val, this );
+            }
+
         },
 
         checkUsername: _.debounce(function( value, ctx ) {
@@ -139,7 +144,7 @@ function( app ) {
                     ctx.set({
                         valid: data.valid,
                         _flash: data.valid ? null : "That username is already in use :("
-                    })
+                    });
                     ctx.trigger("validated");
 
                 }.bind(ctx))
@@ -152,7 +157,7 @@ function( app ) {
             } else {
                 ctx.set({
                     valid: false
-                })
+                });
 
                 ctx.trigger("validated");
             }
@@ -169,14 +174,26 @@ function( app ) {
 
         onKeyup: function( e ) {
             this.validate( e );
+            this.set("_value", $(e.target).val() );
         },
 
         onKeydown: function( e ) {
-            this.valid = false;
+            
+        },
+
+        isAlphaNumeric: function( charCode ) {
+            if ( this.get("alphanumeric") ) {
+                var isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
+                    isNumber = charCode >= 48 && charCode <= 57,
+                    isArrow = charCode >= 37 && charCode <= 40,
+                    isOkay = isLetter || isNumber || isArrow;
+
+                return isOkay;
+            }
+            return true;
         },
 
         conformsTo: function( value, regexp ) {
-
             return regexp.test( value );
         },
 
@@ -222,7 +239,7 @@ function( app ) {
         },
 
         isValid: function() {
-            return this.valid;
+            return this.get("valid");
         }
 
     });
