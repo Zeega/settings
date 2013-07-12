@@ -1569,7 +1569,8 @@ a.tag-link:hover {
 .content-wrapper .username-validation .invalid {
   color: red;
 }
-.page-social input[type=text] {
+.page-social input[type=text],
+.page-social input[type=email] {
   background: #eee;
   width: calc(100% - 20px);
   box-shadow: none;
@@ -1577,7 +1578,8 @@ a.tag-link:hover {
   font-size: 14px;
   height: 2em;
 }
-.page-social input[type=text].error {
+.page-social input[type=text].error,
+.page-social input[type=email].error {
   border-color: red;
 }
 .page-social .username-validation .valid {
