@@ -1520,6 +1520,15 @@ a.tag-link {
 a.tag-link:hover {
   background-color: orangered;
 }
+.flash {
+  font-size: 13px;
+  color: orangered;
+  position: relative;
+  top: -7px;
+}
+.flash.form-valid-message {
+  color: limegreen;
+}
 .content-wrapper {
   background: white;
   padding: 20px;

@@ -163,7 +163,6 @@ function( app, User ) {
                         // this.$(".username-validation").html("<span class='valid'>ok!</span>");
                         $("#fos_user_registration_form_username").removeClass("error");
                     } else {
-                        console.log('invalid')
                         this.$("#fos_user_registration_form_username").after("<div class='username-flash form-error-message'>That username has already been taken :(</div>");
 
                         // this.$(".username-validation").html("<span class='invalid'>That username has already been taken :(</span>");

@@ -9,12 +9,8 @@ function( Facet ) {
         
         model: Facet,
 
-        onSet: function() {
-            console.log("onse se")
-        },
-
         isValid: function() {
-            return !_.contains( this.pluck("valid"), false )
+            return !_.contains( this.pluck("valid"), false );
         },
 
         getValid: function() {

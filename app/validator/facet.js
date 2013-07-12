@@ -20,7 +20,7 @@ function( app ) {
 
             $el: null,
             valid: null,
-            _flash: null,
+            _flash: null
         },
 
         initialize: function() {
@@ -85,7 +85,7 @@ function( app ) {
             // minlength
             if ( this.get("minLength") ) {
                 minlength = this.isMinLength( value, this.get("minLength") );
-                flash = minlength ? flash : "Must be at least " + this.get("minLength") + " characters"
+                flash = minlength ? flash : "Must be at least " + this.get("minLength") + " characters";
             }
 
             // omits
