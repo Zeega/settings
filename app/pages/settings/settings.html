@@ -4,13 +4,14 @@
 
     <form>
         <fieldset>
-            <label>Display Name</label>
-            <input id="display-name" type="text" placeholder="Display Name" value="<%= display_name %>">
-            <span class="help-block">The name that will appear next to your Zeegas.</span>
 
             <label>Username <span class="username-validation"></span></label>
             <input id="username" type="text" placeholder="Username" value="<%= username %>">
-            <span class="help-block">http://zeega.com/@<span class="username-preview"><%= username %></span> — Letters and numbers only!</span>
+            <span class="help-block">http://zeega.com/@<span class="username-preview"><%= username %></span></span>
+
+            <label>Display Name</label>
+            <input id="display-name" type="text" placeholder="Display Name" value="<%= display_name %>">
+            <span class="help-block">The name that will appear next to your Zeegas.</span>
 
             <div class="half-width">
                 <label>Email Address</label>
