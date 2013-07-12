@@ -50,16 +50,22 @@ function( app, User, Validator ) {
 
         events: {
             "click .submit": "saveUserModel",
-            "keyup #zeega_user_registration_social_username": "onUsernameKeydown",
+            "keydown #zeega_user_registration_social_username": "onUsernameKeydown",
+            "keyup #zeega_user_registration_social_username": "onUsernameKeyup"
         },
 
         onUsernameKeydown: function( e ) {
             var charCode = e.which,
                 isLetter = !(charCode > 31 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)),
                 isNumber = charCode >= 48 && charCode <= 57,
-                isOkay = isLetter || isNumber;
+                isArrow = charCode >= 37 && charCode <= 40,
+                isOkay = isLetter || isNumber || isArrow;
 
             return isOkay;
+        },
+
+        onUsernameKeyup: function( e ) {
+
         },
 
         saveUserModel: function() {
