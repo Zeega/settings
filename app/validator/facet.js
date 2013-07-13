@@ -49,7 +49,7 @@ function( app ) {
                     this.validate = this.plaintext;
             }
 
-            if ( this.get("$el").val().length ) this.set("valid", true);
+            if ( this.get("$el").val().length || !this.get("required") ) this.set("valid", true);
 
             this.on("change:valid", this.onValidChange, this );
         },
@@ -99,7 +99,6 @@ function( app ) {
             // maxlength
             if ( this.get("maxLength") ) minlength = this.isMaxLength( value, this.get("maxLength") );
 
-
             if ( !this.get("required") && value.length === 0 ) {
                 this.set({
                     valid: true,
@@ -110,6 +109,7 @@ function( app ) {
                     valid: omits && minlength && maxlength,
                     _flash: flash
                 });
+                this.trigger("change:valid");
             }
 
             this.updateEl( this.get("valid") );
