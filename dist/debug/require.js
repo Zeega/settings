@@ -17346,7 +17346,7 @@ function( app, Validator ) {
         },
 
         onValidation: function( response ) {
-
+            $(".settings-submit").text("Save Updates")
             if ( response.valid ) {
                 this.$(".settings-submit").removeClass("btnz-disabled").addClass("btnz-green");
             } else {
@@ -17371,7 +17371,9 @@ function( app, Validator ) {
                 password: this.$("#password").val()
             });
 
-            $(".settings-submit").removeClass("btnz-disabled");
+            $(".settings-submit")
+                .text("Updates Saved")
+                .addClass("btnz-disabled");
         }
 
     });
