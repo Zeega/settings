@@ -22,7 +22,19 @@
                 <label>New Password</label>
                 <input id="password" type="password" placeholder="Password" >
             </div>
-            
+                <label>Alerts</label>
+                <span class="alert-type">We'll let you know</span><br>
+
+                <input type="checkbox" id="favorite-alert" <% if (notifications.email_on_favorite) { %>checked<% }%> />
+                <span class="alert-type">when someone favorites one of your Zeegas.</span><br>
+
+                <input type="checkbox" id="feature-alert" <% if (notifications.email_on_feature) { %>checked<% }%> />
+                <span class="alert-type">when one of your Zeegas is featured in our Daily</span><br>
+
+                <input type="checkbox" id="popular-alert" <% if (notifications.email_on_popular) { %>checked<% }%> />
+                <span class="alert-type">when one of your Zeegas blows up!</span><br>
+
+
             <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>
         
         </fieldset>

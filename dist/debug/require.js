@@ -405,7 +405,19 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( display_name )+
 '">\n            <span class="help-block">The name that will appear next to your Zeegas.</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
-'">\n            </div>\n\n            <div class="half-width">\n                <label>New Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n            \n            <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
+'">\n            </div>\n\n            <div class="half-width">\n                <label>New Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n                <label>Alerts</label>\n                <span class="alert-type">We\'ll let you know</span><br>\n\n                <input type="checkbox" id="favorite-alert" ';
+ if (notifications.email_on_favorite) { 
+;__p+='checked';
+ }
+;__p+=' />\n                <span class="alert-type">when someone favorites one of your Zeegas.</span><br>\n\n                <input type="checkbox" id="feature-alert" ';
+ if (notifications.email_on_feature) { 
+;__p+='checked';
+ }
+;__p+=' />\n                <span class="alert-type">when one of your Zeegas is featured in our Daily</span><br>\n\n                <input type="checkbox" id="popular-alert" ';
+ if (notifications.email_on_popular) { 
+;__p+='checked';
+ }
+;__p+=' />\n                <span class="alert-type">when one of your Zeegas blows up!</span><br>\n\n\n            <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
 return __p;
 };
@@ -16984,16 +16996,27 @@ function( app ) {
             this.set("_value", this.get("$el").val(), { silent: true });
 
             if ( this.get("vigilant") ) {
-                this.get("$el").bind("keyup.facet-" + this.cid, function(e) {
-                    this.onKeyup( e );
-                }.bind( this ));
-                this.get("$el").bind("keydown.facet-" + this.cid, function(e) {
-                    this.onKeydown( e );
-                    return this.isAlphaNumeric( e.which );
-                }.bind( this ));
+
+                if ( this.get("type") == "checkbox") {
+                    this.set("_value", this.get("$el").is(":checked"), { silent: true });
+                    this.get("$el").bind("change.facet-" + this.cid, function(e) {
+                        this.validate( e );
+                    }.bind(this));
+                } else {
+                    this.get("$el").bind("keyup.facet-" + this.cid, function(e) {
+                        this.onKeyup( e );
+                    }.bind( this ));
+                    this.get("$el").bind("keydown.facet-" + this.cid, function(e) {
+                        this.onKeydown( e );
+                        return this.isAlphaNumeric( e.which );
+                    }.bind( this ));
+                }
             }
 
             switch( this.get("type") ) {
+                case "checkbox":
+                    this.validate = this.checkbox;
+                    break;
                 case "email":
                     this.validate = this.email;
                     break;
@@ -17009,6 +17032,16 @@ function( app ) {
             this.on("change:valid", this.onValidChange, this );
         },
 
+        checkbox: function( e ){
+            this.set({
+                valid: true,
+                _flash: ""
+
+            });
+            this.trigger("update_valid");
+            return true;
+        },
+
         email: function( e ) {
             var isEmail = this.conformsTo(
                     this.get("$el").val(),
@@ -17022,6 +17055,7 @@ function( app ) {
             });
             this.updateEl( isEmail );
 
+            this.trigger("update_valid");
             return isEmail;
         },
 
@@ -17069,6 +17103,7 @@ function( app ) {
 
             this.updateEl( this.get("valid") );
 
+            this.trigger("update_valid");
             return this.get("valid");
         },
 
@@ -17086,6 +17121,7 @@ function( app ) {
 
                 this.checkUsername( val, this );
             }
+            this.trigger("update_valid");
 
         },
 
@@ -17244,7 +17280,7 @@ function( FacetCollection ) {
         },
 
         listen: function() {
-            this.facets.on("change:valid", this.onValidated, this);
+            this.facets.on("update_valid", this.onValidated, this);
         },
 
         unlisten: function() {
@@ -17338,7 +17374,20 @@ function( app, Validator ) {
                         $el: this.$("#password"),
                         minLength: 6,
                         required: false
+                    }, {
+                        type: "checkbox",
+                        $el: this.$("#favorite-alert"),
+                        required: false
+                    }, {
+                        type: "checkbox",
+                        $el: this.$("#feature-alert"),
+                        required: false
+                    }, {
+                        type: "checkbox",
+                        $el: this.$("#popular-alert"),
+                        required: false
                     }
+
                 ]
             });
 
@@ -17346,7 +17395,7 @@ function( app, Validator ) {
         },
 
         onValidation: function( response ) {
-            $(".settings-submit").text("Save Updates")
+            $(".settings-submit").text("Save Updates");
             if ( response.valid ) {
                 this.$(".settings-submit").removeClass("btnz-disabled").addClass("btnz-green");
             } else {
@@ -17357,19 +17406,25 @@ function( app, Validator ) {
         events: {
             "click .settings-submit": "saveUserModel",
             "keyup #username": "onUsernameKeyup"
+
+
         },
 
         onUsernameKeyup: function() {
             $(".username-preview").text( $("#username").val() );
         },
 
-        saveUserModel: function() {
+        saveUserModel: function() { 
             this.model.save({
                 display_name: this.$("#display-name").val(),
                 username: this.$("#username").val(),
                 email: this.$("#email").val(),
-                password: this.$("#password").val()
+                password: this.$("#password").val(),
+                email_on_favorite: this.$("#favorite-alert").is(':checked'),
+                email_on_feature: this.$("#feature-alert").is(':checked'),
+                email_on_popular: this.$("#popular-alert").is(':checked')
             });
+
 
             $(".settings-submit")
                 .text("Updates Saved")
@@ -17407,7 +17462,7 @@ function( app ) {
             thumbnail_url: "",
 
             username: "yourname",
-            email: "tester@test.com",
+            email: "tester@test.com"
         },
 
         url: function() {
@@ -17458,12 +17513,8 @@ function( app ) {
 
         },
 
-        omits: function( value ) {
-
-        },
-
         isMinLength: function( value ) {
-            return 
+
         }
 
 

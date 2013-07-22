@@ -29,16 +29,27 @@ function( app ) {
             this.set("_value", this.get("$el").val(), { silent: true });
 
             if ( this.get("vigilant") ) {
-                this.get("$el").bind("keyup.facet-" + this.cid, function(e) {
-                    this.onKeyup( e );
-                }.bind( this ));
-                this.get("$el").bind("keydown.facet-" + this.cid, function(e) {
-                    this.onKeydown( e );
-                    return this.isAlphaNumeric( e.which );
-                }.bind( this ));
+
+                if ( this.get("type") == "checkbox") {
+                    this.set("_value", this.get("$el").is(":checked"), { silent: true });
+                    this.get("$el").bind("change.facet-" + this.cid, function(e) {
+                        this.validate( e );
+                    }.bind(this));
+                } else {
+                    this.get("$el").bind("keyup.facet-" + this.cid, function(e) {
+                        this.onKeyup( e );
+                    }.bind( this ));
+                    this.get("$el").bind("keydown.facet-" + this.cid, function(e) {
+                        this.onKeydown( e );
+                        return this.isAlphaNumeric( e.which );
+                    }.bind( this ));
+                }
             }
 
             switch( this.get("type") ) {
+                case "checkbox":
+                    this.validate = this.checkbox;
+                    break;
                 case "email":
                     this.validate = this.email;
                     break;
@@ -54,6 +65,16 @@ function( app ) {
             this.on("change:valid", this.onValidChange, this );
         },
 
+        checkbox: function( e ){
+            this.set({
+                valid: true,
+                _flash: ""
+
+            });
+            this.trigger("update_valid");
+            return true;
+        },
+
         email: function( e ) {
             var isEmail = this.conformsTo(
                     this.get("$el").val(),
@@ -67,6 +88,7 @@ function( app ) {
             });
             this.updateEl( isEmail );
 
+            this.trigger("update_valid");
             return isEmail;
         },
 
@@ -114,6 +136,7 @@ function( app ) {
 
             this.updateEl( this.get("valid") );
 
+            this.trigger("update_valid");
             return this.get("valid");
         },
 
@@ -131,6 +154,7 @@ function( app ) {
 
                 this.checkUsername( val, this );
             }
+            this.trigger("update_valid");
 
         },
 

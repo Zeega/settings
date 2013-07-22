@@ -48,7 +48,20 @@ function( app, Validator ) {
                         $el: this.$("#password"),
                         minLength: 6,
                         required: false
+                    }, {
+                        type: "checkbox",
+                        $el: this.$("#favorite-alert"),
+                        required: false
+                    }, {
+                        type: "checkbox",
+                        $el: this.$("#feature-alert"),
+                        required: false
+                    }, {
+                        type: "checkbox",
+                        $el: this.$("#popular-alert"),
+                        required: false
                     }
+
                 ]
             });
 
@@ -56,7 +69,7 @@ function( app, Validator ) {
         },
 
         onValidation: function( response ) {
-            $(".settings-submit").text("Save Updates")
+            $(".settings-submit").text("Save Updates");
             if ( response.valid ) {
                 this.$(".settings-submit").removeClass("btnz-disabled").addClass("btnz-green");
             } else {
@@ -67,19 +80,25 @@ function( app, Validator ) {
         events: {
             "click .settings-submit": "saveUserModel",
             "keyup #username": "onUsernameKeyup"
+
+
         },
 
         onUsernameKeyup: function() {
             $(".username-preview").text( $("#username").val() );
         },
 
-        saveUserModel: function() {
+        saveUserModel: function() { 
             this.model.save({
                 display_name: this.$("#display-name").val(),
                 username: this.$("#username").val(),
                 email: this.$("#email").val(),
-                password: this.$("#password").val()
+                password: this.$("#password").val(),
+                email_on_favorite: this.$("#favorite-alert").is(':checked'),
+                email_on_feature: this.$("#feature-alert").is(':checked'),
+                email_on_popular: this.$("#popular-alert").is(':checked')
             });
+
 
             $(".settings-submit")
                 .text("Updates Saved")

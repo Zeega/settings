@@ -1540,7 +1540,15 @@ a.tag-link:hover {
   font-size: 12px;
   color: #999999;
 }
-.content-wrapper input {
+.content-wrapper .alert-type {
+  font-family: "helvetica", sans-serif;
+  font-size: 12px;
+}
+.content-wrapper input[type="submit"],
+.content-wrapper input[type="text"],
+.content-wrapper input[type="button"],
+.content-wrapper input[type="password"],
+.content-wrapper input[type="email"] {
   background: #eee;
   width: calc(100% - 16px);
   box-shadow: none;
@@ -1548,7 +1556,11 @@ a.tag-link:hover {
   font-size: 14px;
   height: 2em;
 }
-.content-wrapper input.error {
+.content-wrapper input[type="submit"].error,
+.content-wrapper input[type="text"].error,
+.content-wrapper input[type="button"].error,
+.content-wrapper input[type="password"].error,
+.content-wrapper input[type="email"].error {
   border-color: red;
 }
 .content-wrapper .half-width {

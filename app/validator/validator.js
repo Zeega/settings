@@ -22,7 +22,7 @@ function( FacetCollection ) {
         },
 
         listen: function() {
-            this.facets.on("change:valid", this.onValidated, this);
+            this.facets.on("update_valid", this.onValidated, this);
         },
 
         unlisten: function() {

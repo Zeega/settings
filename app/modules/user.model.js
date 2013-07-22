@@ -24,7 +24,7 @@ function( app ) {
             thumbnail_url: "",
 
             username: "yourname",
-            email: "tester@test.com",
+            email: "tester@test.com"
         },
 
         url: function() {
@@ -75,12 +75,8 @@ function( app ) {
 
         },
 
-        omits: function( value ) {
-
-        },
-
         isMinLength: function( value ) {
-            return 
+
         }
 
 
