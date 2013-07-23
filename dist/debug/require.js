@@ -405,19 +405,19 @@ __p+='<h1>Settings</h1>\n\n<div class="content-wrapper">\n\n    <form>\n        
 ( display_name )+
 '">\n            <span class="help-block">The name that will appear next to your Zeegas.</span>\n\n            <div class="half-width">\n                <label>Email Address</label>\n                <input id="email" type="email" placeholder="Email Address" value="'+
 ( email )+
-'">\n            </div>\n\n            <div class="half-width">\n                <label>New Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n                <label>Alerts</label>\n                <span class="alert-type">We\'ll let you know</span><br>\n\n                <input type="checkbox" id="favorite-alert" ';
+'">\n            </div>\n\n            <div class="half-width">\n                <label>New Password</label>\n                <input id="password" type="password" placeholder="Password" >\n            </div>\n                <label>Notifications</label>\n                <span class="alert-type">Let me know when:</span><br>\n\n                <input type="checkbox" id="favorite-alert" ';
  if (notifications.email_on_favorite) { 
 ;__p+='checked';
  }
-;__p+=' />\n                <span class="alert-type">when someone favorites one of your Zeegas.</span><br>\n\n                <input type="checkbox" id="feature-alert" ';
+;__p+=' />\n                <span class="alert-type">My Zeegas are favorited.</span><br>\n\n                <input type="checkbox" id="feature-alert" ';
  if (notifications.email_on_feature) { 
 ;__p+='checked';
  }
-;__p+=' />\n                <span class="alert-type">when one of your Zeegas is featured in our Daily</span><br>\n\n                <input type="checkbox" id="popular-alert" ';
+;__p+=' />\n                <span class="alert-type">My Zeegas are chosen as the Zeega of the Day.</span><br>\n\n                <input type="checkbox" id="popular-alert" ';
  if (notifications.email_on_popular) { 
 ;__p+='checked';
  }
-;__p+=' />\n                <span class="alert-type">when one of your Zeegas blows up!</span><br>\n\n\n            <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
+;__p+=' />\n                <span class="alert-type">My Zeegas are blowing up!</span><br>\n\n\n            <a href="#" class="btnz btnz-disabled settings-submit">Save Updates</a>\n        \n        </fieldset>\n    </form>\n\n</div>';
 }
 return __p;
 };
